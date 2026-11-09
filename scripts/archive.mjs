@@ -26,7 +26,7 @@
  *    year's fetch stamp so the next live build refetches the pinned build.
  *    Prints the `firebase.json` redirects for the edition's share pages.
  *    The output is published on the `archives` branch and pinned in
- *    `archive/sources.json` (ADR 0012, `docs/adapting.md`).
+ *    `archive/sources.json` (ADR 0013, `docs/adapting.md`).
  *
  * `npm run archive -- <year> --facts` writes only `archive/<year>/edition.json`
  * (for an archive made before the file existed).

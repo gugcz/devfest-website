@@ -40,7 +40,7 @@ paths:
 - **Archives** (`archive/<year>/`) are frozen builds from
   `npm run archive -- <year>`, kept on the `archives` branch and fetched at
   the commit `archive/sources.json` pins (`src/lib/archive-sources.ts`,
-  ADR 0012); never edit one by hand, never commit one to `main`. A build
+  ADR 0013); never edit one by hand, never commit one to `main`. A build
   under a base path works because `src/middleware.ts` rebases root-relative
   URLs in rendered HTML; code the middleware never sees (islands, scripts, absolute
   URLs, `/api/*` reads) uses `withBase()`, `absoluteUrl()`, `liveUrl()` and
@@ -55,7 +55,11 @@ paths:
   name the edition's year.
   Event offers come from `/api/tickets` at build time (`tickets-static.ts`).
   Sitemap via `@astrojs/sitemap`. Share pages and `/invite/*` set their own
-  OG image.
+  OG image. Text a link preview shows (`<title>`, description, `og:title`,
+  `og:description`, image alt) goes through `previewText`
+  (`src/lib/preview-text.ts`): `<title set:html={previewText(…)} />` and
+  `<MetaText>`, never `content={…}`. Astro writes every `&` as `&amp;`, and
+  some unfurlers show it as it is.
 - **Readers without script** (assistants, link readers) get the data as
   build-time HTML: `SpeakerIndex`, `TalkIndex`, `TicketIndex` in a `.no-js`
   block under the island, and `/llms.txt` (`src/pages/llms.txt.ts`). A page

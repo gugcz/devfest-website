@@ -328,8 +328,10 @@ fixed menu bar sits over it; the stage pads `header-h` + 1.5rem.
 **The veil** starts under the stage: a gradient from transparent to
 `ink-veil` over the first 14rem, then solid. Home bands are centred single
 columns at the `measure`, separated by `section` top padding; partners
-widen to `maxw`; the prints step out to four columns from 900px, past the
-measure by up to 14rem a side.
+widen to `maxw`; the facts take back the band's own gutter, so their three
+columns span the whole measure; the prints step out to four columns from
+900px, past the measure by up to 14rem a side, and the film under them to
+the same width.
 
 **A subpage** opens on its own stage (`SubpageHero`, at least 22rem, up to
 58svh): the painting behind, anchored on the title; the title and one note
@@ -371,15 +373,17 @@ else glows.
 
 ### The aether (the painting)
 **[CURRENT]** `AetherCanvas.astro` runs behind every stage: the home page
-and every subpage's head. It is a fixed full-viewport WebGL 1 canvas at
+and every subpage's head. It is a fixed WebGL 1 canvas at
 z-index -1 (over the root's ground, under every block), fading in over
-1.8s. It paints smoke, the sigil (centred on the element marked
+1.8s. It is as tall as the large viewport (`100lvh`), so a phone's URL bar
+sliding in or out while scrolling never resizes it. It paints smoke, the sigil (centred on the element marked
 `data-aether-anchor`: the logo, a subpage's title), the traces with pulses,
 embers, the hatched vignette and paper grain; a lamp follows the pointer
 for five seconds, then drifts. It runs at 24 fps and only while its anchor
-is on screen (scrolled under the veil it holds its frame), drops a fifth of
-its resolution when 48 frames average slower than about 16 fps (down to
-40%), caps its pixel count (lower on a small screen), and stops, freeing the
+is on screen (scrolled under the veil it holds its frame, then resumes from
+it), drops a fifth of its resolution when 48 frames average slower than
+about 16 fps (down to 40%), caps its pixel count (lower on a small screen),
+and stops, freeing the
 GPU, before a navigation swaps the page. Under it, on the root (`html`), the
 three radial gradients (rust below, petrol top-left, plum top-right, fixed)
 over ink are the ground of every page.
@@ -447,6 +451,8 @@ two inked rules with diamonds (`clamp(2.5rem, 8vw, 4.5rem)` each), centred.
   voice) and an optional label on its top edge (`.tape`, brass on ink).
 - **Print** (`.paper-photo`, the home `.print`): a photograph in a 1px brass
   frame (50%), slightly desaturated (`saturate(0.85) contrast(1.05)`).
+- **Film** (the home `.film`): the last edition's aftermovie, a 16:9
+  YouTube player in the print's frame and plate, as wide as the prints.
 
 **[MUST] The Plates Not Cards Rule.** What repeats sits on square ink plates
 with a faint brass edge, never tilted, never shadowed, never rounded. The
@@ -454,9 +460,12 @@ with a faint brass edge, never tilted, never shadowed, never rounded. The
 hidden).
 
 ### Facts and figures
-Description lists, centred and wrapping. A fact: brass term over an ivory
-value, an optional muted note. A figure: the number in brass light over
-its muted term.
+Description lists, centred. Facts sit in equal columns, three in a row
+(below 720px the first takes the row and the other two share the next;
+under 20em they stack), so each centres on its column and the row on the
+lead. A fact: brass term
+over an ivory value, an optional muted note. A figure: the number in brass
+light over its muted term.
 
 ### Inputs / Fields
 - **Style:** a 1px `field-border` on an ink plate (70%), ivory text, square,

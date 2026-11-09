@@ -25,8 +25,10 @@ ended moves to `devfest.cz/<year>` as a frozen build
    `/<year>`, and writes `archive/<year>/`. A section already switched off
    goes back on for the archive with `PUBLIC_FEATURES_ON` (e.g.
    `PUBLIC_FEATURES_ON=tickets npm run archive -- 2027`). Never edit it by
-   hand.
-2. **Publish it** ([ADR 0012](adr/0012-past-editions-live-on-the-archives-branch.md)):
+   hand. Its aftermovie, once out, goes into `AFTERMOVIES` in
+   `src/lib/editions.ts` (the YouTube video id); the home page plays it
+   under the edition's figures.
+2. **Publish it** ([ADR 0013](adr/0013-past-editions-live-on-the-archives-branch.md)):
    the build is committed as `<year>/` on the `archives` branch, never on
    `main` (`archive/` is ignored there). From a worktree of `archives`
    (`git worktree add ../archives origin/archives`), copy `archive/<year>/`

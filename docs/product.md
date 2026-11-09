@@ -82,7 +82,9 @@ edition is not announced; copy never says "one day".
   tickets, and a framed portal to `/2026`), then on the veil: what
   DevFest.cz is and what is announced (when, where, language), the sections
   the flags have on (tickets, speakers, partners), 2026 in figures (from the
-  archive's facts and frozen lineup) with prints from past editions, the
+  archive's facts and frozen lineup) with prints from past editions and
+  the 2026 aftermovie (a lazy YouTube embed in privacy-enhanced mode,
+  loaded regardless of the cookie choice; privacy policy §2f, ADR 0012), the
   app (flag `app`), the newsletter. JSON-LD is `Organization` and `WebSite`, plus `Event`
   once the day is set.
 - Pages today: home, FAQ, contact, code of conduct, privacy policy,
@@ -146,8 +148,10 @@ edition is not announced; copy never says "one day".
 - Event facts (date, venue, coordinates, `.ics`) in `src/lib/event.ts`.
 - The 2026 lineup as it was on archive day: `2026/api/lineup.json` on the
   `archives` branch (`archive/2026/api/lineup.json` after a build).
+- Aftermovies by year: `AFTERMOVIES` in `src/lib/editions.ts` (YouTube
+  video ids; 2026 has one).
 - **Absent:** testimonials, attendance figures beyond what page copy states,
-  pricing outside ti.to, photographs of 2026, an aftermovie, and for 2027
+  pricing outside ti.to, photographs of 2026, and for 2027
   anything beyond "Fall 2027, Prague" (date, venue, prices, call for
   speakers). Do not fabricate any of these.
 

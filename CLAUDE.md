@@ -81,7 +81,7 @@ edited PR body keeps its old text in the public edit history.
   (`npm run archive`, `src/integrations/archives.ts`, `src/lib/editions.ts`).
   They live on the `archives` branch; `main` tracks only
   `archive/sources.json`, the pinned commits, and every build fetches them
-  (`src/lib/archive-sources.ts`, ADR 0012). Never edited by hand, excluded
+  (`src/lib/archive-sources.ts`, ADR 0013). Never edited by hand, excluded
   from the checks.
 - `src/components/`: `.astro` sections and React islands (`.tsx`,
   `client:load`) with co-located `.module.scss`; `aether/` holds the
@@ -96,8 +96,9 @@ edited PR body keeps its old text in the public edit history.
   change there breaks its next copy.
 - `src/layouts/`: `Head.astro` (meta, OG, JSON-LD every layout shares),
   `BaseLayout.astro` (the aether chrome; tokens and global SCSS in
-  `BaseLayout.scss`), `Share.astro` (share-page preview, then forward)
-  and `Redirect.astro` (`/press`, `/sessions`).
+  `BaseLayout.scss`), `Share.astro` (share-page preview, then forward),
+  `MetaText.astro` (a preview `<meta>` with a bare `&`) and
+  `Redirect.astro` (`/press`, `/sessions`).
 - `functions/src/<domain>/`: Cloud Functions per domain (`tickets`,
   `sessionize`, `lineup`, `invoice`, `workshops`); shared helpers in `lib/`,
   option presets in `options.ts`.

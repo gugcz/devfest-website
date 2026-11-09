@@ -58,7 +58,7 @@ npm run verify
 npm run archive -- 2027
 ```
 
-`archive/<year>/` is a frozen build: it lives on the `archives` branch, `archive/sources.json` pins the commit, and every command that loads `astro.config.ts` (`dev`, `build`, `check`) fetches it when it is missing or its pin moved ([ADR 0012](docs/adr/0012-past-editions-live-on-the-archives-branch.md)). The live build copies every pinned year into `dist/` and serves it at `/<year>`. Never edit it by hand; once it is pinned, `npm run preview` after a build shows it. Publishing a new one: `docs/adapting.md` → "The yearly switch".
+`archive/<year>/` is a frozen build: it lives on the `archives` branch, `archive/sources.json` pins the commit, and every command that loads `astro.config.ts` (`dev`, `build`, `check`) fetches it when it is missing or its pin moved ([ADR 0013](docs/adr/0013-past-editions-live-on-the-archives-branch.md)). The live build copies every pinned year into `dist/` and serves it at `/<year>`. Never edit it by hand; once it is pinned, `npm run preview` after a build shows it. Publishing a new one: `docs/adapting.md` → "The yearly switch".
 
 `main` is the production branch. A merge into it deploys the site
 (`firebase-hosting-merge.yml`) and, when `functions/**` or `firebase.json`
@@ -331,7 +331,7 @@ page.
 
 | Route | Description |
 |-------|-------------|
-| `/` | The edition's home: the DF27 stage, what is announced, tickets and speakers while their flags are on, the last edition in figures, the app, the newsletter |
+| `/` | The edition's home: the DF27 stage, what is announced, tickets and speakers while their flags are on, the last edition in figures and its aftermovie, the app, the newsletter |
 | `/2026/…` | The 2026 edition, frozen (`2026/` on the `archives` branch): every page it had, its lineup and speaker photos included |
 | `/speakers` (flag `lineup`) | Speaker lineup (reads `/api/lineup`); `?speaker=<id>` opens one speaker |
 | `/speakers/<id>`, `/talks/<id>` (flag `lineup`) | Share pages: one speaker or talk as text with its own link preview, then forward to the sheet; indexed |

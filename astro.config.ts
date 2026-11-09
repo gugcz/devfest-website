@@ -26,7 +26,7 @@ if (archive && !config.event.date) {
     throw new Error(`PUBLIC_ARCHIVE=${archive}: src/site.config.ts has no event.date; an edition is archived once it has taken place.`);
 }
 // Past editions' builds come from the `archives` branch at the commits
-// `archive/sources.json` pins (ADR 0012). Every build, archive builds too,
+// `archive/sources.json` pins (ADR 0013). Every build, archive builds too,
 // fetches the ones it lacks before reading them.
 ensureArchives();
 const ARCHIVED = archive ? new Map<string, string | undefined>() : archivedPages();

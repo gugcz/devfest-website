@@ -1,4 +1,4 @@
-# 0012. Past editions' builds live on the `archives` branch; `main` pins them
+# 0013. Past editions' builds live on the `archives` branch; `main` pins them
 
 - Status: accepted
 - Date: 2026-11-09

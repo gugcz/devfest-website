@@ -67,9 +67,9 @@ Visitors see no change: `devfest.cz/2026` serves the same bytes.
 
 ## Technical Considerations
 
-- **Architecture:** ADR 0012 records "past editions' builds live on the
+- **Architecture:** ADR 0013 records "past editions' builds live on the
   `archives` branch; `main` pins them". ADR 0011's status becomes "accepted;
-  the 'live build carries the archives' bullet superseded by 0012" (the
+  the 'live build carries the archives' bullet superseded by 0013" (the
   format of 0002), and `docs/adr/README.md` says the same.
 - **History:** the 15 MB stays in `main`'s history from #531; no rewrite.
   The win is the tree and every future edition.
@@ -99,7 +99,7 @@ Visitors see no change: `devfest.cz/2026` serves the same bytes.
   own commit so the code reads alone.
 - **Files touched:**
   - new: `archive/sources.json`,
-    `docs/adr/0012-past-editions-live-on-the-archives-branch.md`
+    `docs/adr/0013-past-editions-live-on-the-archives-branch.md`
   - code: `.gitignore`, `astro.config.ts`, `src/lib/archive-sources.ts`
     (+ `.test.ts`),
     `src/lib/editions.ts`, `scripts/archive.mjs`

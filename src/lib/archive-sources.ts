@@ -1,5 +1,5 @@
 /**
- * Where past editions' frozen builds come from (ADR 0012). They live on the
+ * Where past editions' frozen builds come from (ADR 0013). They live on the
  * `archives` branch, one `<year>/` per edition; `archive/sources.json` pins
  * each year to a commit there. `ensureArchives()` puts every pinned build at
  * `archive/<year>/` before a build reads it. Build time only.

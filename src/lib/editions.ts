@@ -1,7 +1,7 @@
 /**
  * Past editions (ADR 0011): the ones archived here (`archive/<year>/`,
  * fetched from the `archives` branch at the commits `archive/sources.json`
- * pins, ADR 0012) and the older ones still served from their own subdomains
+ * pins, ADR 0013) and the older ones still served from their own subdomains
  * by other repositories. Build time only: reads the file system.
  */
 import { existsSync, readFileSync } from 'node:fs';
@@ -17,6 +17,9 @@ const ARCHIVE_ROOT = join(process.cwd(), 'archive');
 
 /** Editions on their own `<year>.devfest.cz` sites, newest first. */
 const ON_SUBDOMAINS: readonly number[] = [2025, 2019, 2018, 2017];
+
+/** Each edition's aftermovie: its YouTube video id, by year. */
+const AFTERMOVIES: Readonly<Record<number, string>> = { 2026: 'vQGgPPCq1Eg' };
 
 export interface PastEdition {
 	year: number;
@@ -71,6 +74,8 @@ export interface LastEdition extends EditionFacts {
 	href: string;
 	speakers: number;
 	talks: number;
+	/** The YouTube video id of its aftermovie, `null` until there is one. */
+	aftermovie: string | null;
 }
 
 /**
@@ -100,7 +105,7 @@ export function lastEdition(): LastEdition | null {
 	const file = join(ARCHIVE_ROOT, year, 'edition.json');
 	if (!existsSync(file)) return null;
 	const facts = JSON.parse(readFileSync(file, 'utf8')) as EditionFacts;
-	return { ...facts, href: `/${year}`, ...onStage(year) };
+	return { ...facts, href: `/${year}`, ...onStage(year), aftermovie: AFTERMOVIES[facts.year] ?? null };
 }
 
 /**

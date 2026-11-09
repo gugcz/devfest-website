@@ -16,6 +16,12 @@ const FPS = 24;
 const START_OFFSET = 40;
 /** The time the still frame (reduced motion) shows. */
 const STILL_AT = START_OFFSET + 14;
+/**
+ * The longest step the clock takes between two drawn frames, in seconds.
+ * After a pause (anchor scrolled away, tab hidden) the paint resumes where it
+ * stopped; under 10 fps it slows down instead of skipping.
+ */
+const MAX_STEP = 0.1;
 
 const UNIFORMS = ['u_res', 'u_time', 'u_ignite', 'u_lamp', 'u_center', 'u_rings', 'u_traces'] as const;
 type Uniforms = Record<(typeof UNIFORMS)[number], WebGLUniformLocation | null>;
@@ -117,7 +123,7 @@ function animate(
 	maxPixels: number,
 ): () => void {
 	const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-	const start = performance.now();
+	let clock = START_OFFSET;
 	let quality = 1;
 	let cssW = 1;
 	let cssH = 1;
@@ -127,10 +133,12 @@ function animate(
 	let lastFrame = 0;
 	let slow = { sum: 0, count: 0 };
 	let lost = false;
+	/** The time of the frame on the canvas, repainted after a resize. */
+	let shown = START_OFFSET;
 
 	function resize(): void {
-		cssW = window.innerWidth;
-		cssH = window.innerHeight;
+		cssW = Math.max(1, canvas.clientWidth);
+		cssH = Math.max(1, canvas.clientHeight);
 		const dpr = window.devicePixelRatio || 1;
 		const scale = Math.min(dpr, Math.sqrt(maxPixels / (cssW * cssH))) * quality;
 		canvas.width = Math.max(2, Math.round(cssW * scale));
@@ -145,8 +153,10 @@ function animate(
 
 	function render(seconds: number): void {
 		if (lost) return;
+		shown = seconds;
 		gl.uniform1f(u.u_time, seconds);
-		// 0 → 1 over the first seconds (the wave of light after load), then 1.
+		// 0 → 1 over the painting's first seconds of movement (the wave of
+		// light), then 1.
 		const ignite = reduced.matches ? 1 : Math.min(1, Math.max(0, (seconds - START_OFFSET - 0.6) / 4.2));
 		gl.uniform1f(u.u_ignite, ignite);
 		gl.uniform2f(u.u_lamp, lamp.x, lamp.y);
@@ -181,18 +191,20 @@ function animate(
 		if (dt < 1000 / FPS - 2) return;
 		lastFrame = now;
 		adapt(dt);
-		const seconds = (now - start) / 1000 + START_OFFSET;
-		moveLamp(now, seconds);
-		render(seconds);
+		clock += Math.min(dt / 1000, MAX_STEP);
+		moveLamp(now, clock);
+		render(clock);
 	}
 
 	function still(): void {
 		lamp = { x: 0.95, y: -0.5 };
+		// Motion turned back on picks up from the still frame, past the wave.
+		clock = Math.max(clock, STILL_AT);
 		render(STILL_AT);
 	}
 
 	// The painting only moves while its anchor (the logo, a page title) is on
-	// screen; scrolled under the veil it holds its last frame.
+	// screen; scrolled under the veil it holds its last frame and its clock.
 	let inView = true;
 	function run(): void {
 		cancelAnimationFrame(raf);
@@ -215,7 +227,10 @@ function animate(
 	const onResize = (): void => {
 		if (lost) return;
 		resize();
-		if (reduced.matches) render(STILL_AT);
+		// A new canvas size clears it to black. Repaint the held frame now: the
+		// next 24 fps tick can be several display frames away, and scrolled
+		// past the anchor there is no next tick at all.
+		render(shown);
 	};
 	// A lost context stays lost: the canvas fades out and the CSS gradient
 	// behind it is the background until the next page load.
@@ -227,7 +242,12 @@ function animate(
 	};
 
 	window.addEventListener('pointermove', onPointer, { passive: true });
-	window.addEventListener('resize', onResize);
+	// Sized by the canvas's box, not the window: scrolling on a phone slides
+	// the URL bar and resizes the window, while the box (`100lvh`,
+	// `AetherCanvas.astro`) stays put, so the painting does not jump. Its
+	// first callback, on the next frame, repaints `shown`.
+	const sized = new ResizeObserver(onResize);
+	sized.observe(canvas);
 	const onMotionChange = (): void => {
 		if (!lost) run();
 	};
@@ -240,7 +260,7 @@ function animate(
 		watch.disconnect();
 		cancelAnimationFrame(raf);
 		window.removeEventListener('pointermove', onPointer);
-		window.removeEventListener('resize', onResize);
+		sized.disconnect();
 		reduced.removeEventListener('change', onMotionChange);
 		canvas.removeEventListener('webglcontextlost', onLost);
 		gl.getExtension('WEBGL_lose_context')?.loseContext();

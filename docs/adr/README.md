@@ -20,5 +20,6 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0008](0008-agent-readable-build-time-html.md) | Readers without script get the lineup, programme and prices as build-time HTML | accepted |
 | [0009](0009-database-rules-live-in-the-app-repo.md) | Firestore and RTDB rules live whole in the app repo and deploy from its CI | accepted |
 | [0010](0010-site-config-and-feature-flags.md) | Every edition fact lives in one typed site config; sections switch off by flag | accepted |
-| [0011](0011-root-for-the-next-edition-archives-under-the-year.md) | The root belongs to the next edition; past editions are frozen builds under `/<year>` | accepted; build storage superseded by 0012 |
-| [0012](0012-past-editions-live-on-the-archives-branch.md) | Past editions' builds live on the `archives` branch; `main` pins them | accepted |
+| [0011](0011-root-for-the-next-edition-archives-under-the-year.md) | The root belongs to the next edition; past editions are frozen builds under `/<year>` | accepted; build storage superseded by 0013 |
+| [0012](0012-aftermovie-as-a-lazy-youtube-embed.md) | The aftermovie is a lazy YouTube embed, loaded regardless of consent | accepted |
+| [0013](0013-past-editions-live-on-the-archives-branch.md) | Past editions' builds live on the `archives` branch; `main` pins them | accepted |

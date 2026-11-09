@@ -23,7 +23,7 @@ const SECTIONS = [
 	<main class="page-stack">
 		<SubpageHero
 			titleHtml={'Privacy<br />Policy'}
-			lede="How GUG.cz, z.s. collects, uses and protects your personal data on this site and in the DevFest.cz app. Last updated October 2026."
+			lede="How GUG.cz, z.s. collects, uses and protects your personal data on this site and in the DevFest.cz app. Last updated November 2026."
 			seoHeading="DevFest.cz Privacy Policy"
 			titleId="privacy-title"
 		/>
@@ -137,6 +137,19 @@ const SECTIONS = [
 							records are retained for up to 10 years, as required by Czech tax and
 							accounting law.
 						</p>
+
+						<h3>f) Embedded video (YouTube)</h3>
+						<p>
+							The home page embeds the aftermovie of the last edition from YouTube in its
+							privacy-enhanced mode (<code>youtube-nocookie.com</code>). The player loads when you
+							scroll near it, regardless of your cookie choice. Your browser then connects to
+							YouTube (Google), which receives your IP address and browser information and stores
+							data in your browser as soon as the player loads, before you press play. Google
+							processes it under the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>.
+							In this mode Google does not use the view to personalise YouTube or the ads you see
+							elsewhere. Legal basis: legitimate interests (GDPR Art. 6(1)(f)), showing what the
+							conference is like.
+						</p>
 					</section>
 
 					<section id="cookies">
@@ -175,6 +188,11 @@ const SECTIONS = [
 									<td data-label="Purpose">Google reCAPTCHA — bot protection (set for security, not consent-gated)</td>
 									<td data-label="Duration">6 months</td>
 								</tr>
+								<tr>
+									<th scope="row">YouTube player, e.g. <code>ytidb::*</code>, <code>YtIdbMeta</code></th>
+									<td data-label="Purpose">YouTube's embedded player on the home page: localStorage and IndexedDB on youtube-nocookie.com (privacy-enhanced mode, not consent-gated)</td>
+									<td data-label="Duration">Until you clear browser storage</td>
+								</tr>
 							</tbody>
 						</table>
 					</section>
@@ -190,6 +208,7 @@ const SECTIONS = [
 							<li>SmartEmailing — newsletter delivery</li>
 							<li>Google Firebase (Hosting, Analytics, Performance Monitoring, Firestore) — website hosting, analytics, performance measurement, and storage of invoice requests</li>
 							<li>Google reCAPTCHA Enterprise (via Firebase App Check) — bot protection</li>
+							<li>Google YouTube (embedded player, privacy-enhanced mode) — the aftermovie on the home page</li>
 							<li>iDoklad (Solitea a.s. / Seyfor, <a href="https://www.idoklad.cz" target="_blank" rel="noopener noreferrer">idoklad.cz</a>) — issuing company invoices</li>
 							<li>ti.to — ticket sales and discount-code redemption</li>
 						</ul>

@@ -537,12 +537,19 @@ function printFailureDetails({ failures, controlFailures, flowErrors, totalViola
 // another's state.
 const TABS = 4;
 
+// The home page's aftermovie (`.film`) is a YouTube iframe. The sweep serves
+// a blank player in its place: YouTube's own DOM is not ours to fix, and the
+// run stays off the network. Axe still checks the iframe and its title.
+const YOUTUBE_PLAYER = 'https://www.youtube-nocookie.com/embed/**';
+const PLAYER_STUB = '<!doctype html><html lang="en"><title>Player stub</title><body></body></html>';
+
 async function auditPages(browser, origin, paths, tags, report) {
 	const queue = [...paths];
 	const tab = async () => {
 		// Force reduced motion so on-load fade animations finish instantly.
 		// Otherwise axe samples mid-fade and reports phantom contrast issues.
 		const context = await browser.newContext({ reducedMotion: 'reduce' });
+		await context.route(YOUTUBE_PLAYER, (route) => route.fulfill({ contentType: 'text/html', body: PLAYER_STUB }));
 		const page = await context.newPage();
 		for (let urlPath = queue.shift(); urlPath !== undefined; urlPath = queue.shift()) {
 			await auditPage(page, origin, urlPath, tags, report);
