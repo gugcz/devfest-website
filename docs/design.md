@@ -386,7 +386,9 @@ about 16 fps (down to 40%), caps its pixel count (lower on a small screen),
 and stops, freeing the
 GPU, before a navigation swaps the page. Under it, on the root (`html`), the
 three radial gradients (rust below, petrol top-left, plum top-right, fixed)
-over ink are the ground of every page.
+over ink are the ground of every page. The page does not rubber-band past
+its ends (`overscroll-behavior-y: none` on the root): pulled past the footer
+it would lift off the fixed painting and bare a band of it.
 
 **[MUST]** Under `prefers-reduced-motion` the painting is one still frame.
 Without WebGL the root's gradients are the painting.
