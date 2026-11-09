@@ -55,7 +55,7 @@ describe('ensureArchives', () => {
 	before(() => {
 		origin = mkdtempSync(join(tmpdir(), 'archives-origin-'));
 		site = mkdtempSync(join(tmpdir(), 'archives-site-'));
-		git(origin, 'init', '-q', '-b', 'archives');
+		git(origin, 'init', '-q', '-b', '2026');
 		git(site, 'init', '-q');
 		git(site, 'remote', 'add', 'origin', origin);
 	});
@@ -65,7 +65,7 @@ describe('ensureArchives', () => {
 	});
 
 	it('fetches the pinned build into archive/<year>/, then leaves it alone', () => {
-		const sha = commit(origin, { '2026/index.html': 'first', '2026/old.html': 'gone later' });
+		const sha = commit(origin, { 'archive/2026/index.html': 'first', 'archive/2026/old.html': 'gone later' });
 		pin(site, { 2026: sha });
 
 		ensureArchives(site, log);
@@ -77,7 +77,7 @@ describe('ensureArchives', () => {
 	});
 
 	it('replaces the build when the pin moves, without leftovers', () => {
-		const sha = commit(origin, { '2026/index.html': 'second' });
+		const sha = commit(origin, { 'archive/2026/index.html': 'second' });
 		pin(site, { 2026: sha });
 
 		ensureArchives(site, log);
@@ -90,7 +90,7 @@ describe('ensureArchives', () => {
 		const shallow = mkdtempSync(join(tmpdir(), 'archives-shallow-'));
 		try {
 			git(shallow, 'clone', '-q', '--depth=1', `file://${origin}`, '.');
-			const sha = commit(origin, { '2026/index.html': 'third' });
+			const sha = commit(origin, { 'archive/2026/index.html': 'third' });
 			pin(shallow, { 2026: sha });
 
 			ensureArchives(shallow, log);
@@ -104,7 +104,7 @@ describe('ensureArchives', () => {
 	it('fails by year and commit when the pin cannot be fetched', () => {
 		const sha = '0'.repeat(40);
 		pin(site, { 2026: sha });
-		assert.throws(() => ensureArchives(site, log), new RegExp(`archive/2026: cannot get 2026/ from commit ${sha}`));
+		assert.throws(() => ensureArchives(site, log), new RegExp(`archive/2026: cannot get it from commit ${sha}`));
 		assert.equal(existsSync(join(site, 'archive', '2026.source')), false);
 	});
 });

@@ -7,7 +7,9 @@ brainstorm: docs/brainstorm/2026-11-08-edition-archive-and-teaser-brainstorm-doc
 
 ## refactor(archive): past editions' builds live on the archives branch, main pins them - Standard
 
-**Status:** Done.
+**Status:** Done, changed after approval: the build lives on its year branch
+(`2026`, PR #540), not on an orphan `archives` branch
+([ADR 0013](../adr/0013-past-edition-builds-live-on-their-year-branch.md)).
 
 ## Overview
 
@@ -99,7 +101,7 @@ Visitors see no change: `devfest.cz/2026` serves the same bytes.
   own commit so the code reads alone.
 - **Files touched:**
   - new: `archive/sources.json`,
-    `docs/adr/0013-past-editions-live-on-the-archives-branch.md`
+    `docs/adr/0013-past-edition-builds-live-on-their-year-branch.md`
   - code: `.gitignore`, `astro.config.ts`, `src/lib/archive-sources.ts`
     (+ `.test.ts`),
     `src/lib/editions.ts`, `scripts/archive.mjs`

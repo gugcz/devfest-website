@@ -45,7 +45,7 @@ CLAUDE.local.md
 .agent_context/
 .archive/
 
-# Past editions' frozen builds: fetched from the archives branch at the
-# commits archive/sources.json pins (ADR 0012), never committed here.
+# Past editions' frozen builds: fetched from their year branches at the
+# commits archive/sources.json pins (ADR 0013), never committed here.
 archive/*
 !archive/sources.json

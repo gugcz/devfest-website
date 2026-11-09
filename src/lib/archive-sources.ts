@@ -1,14 +1,14 @@
 /**
- * Where past editions' frozen builds come from (ADR 0013). They live on the
- * `archives` branch, one `<year>/` per edition; `archive/sources.json` pins
- * each year to a commit there. `ensureArchives()` puts every pinned build at
- * `archive/<year>/` before a build reads it. Build time only.
+ * Where past editions' frozen builds come from (ADR 0013). Each lives on
+ * its year branch (`2026`) as `archive/<year>/`; `archive/sources.json`
+ * pins each year to a commit there. `ensureArchives()` puts every pinned
+ * build at `archive/<year>/` before a build reads it. Build time only.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** Year → the commit on `archives` that holds its build. */
+/** Year → the commit on its year branch that holds its build. */
 export type ArchiveSources = Record<string, string>;
 
 /** The pins in `<root>/archive/sources.json`; none without the file. */
@@ -21,7 +21,7 @@ export function readArchiveSources(root = process.cwd()): ArchiveSources {
 	}
 	for (const [year, sha] of Object.entries(sources)) {
 		if (!/^\d{4}$/.test(year) || typeof sha !== 'string' || !/^[0-9a-f]{40}$/.test(sha)) {
-			throw new Error(`archive/sources.json: "${year}" must map a year to a full commit SHA on the archives branch.`);
+			throw new Error(`archive/sources.json: "${year}" must map a year to a full commit SHA on its year branch.`);
 		}
 	}
 	return sources as ArchiveSources;
@@ -47,14 +47,14 @@ function fetchCommit(root: string, sha: string): void {
 	git(root, ['fetch', '--quiet', ...(shallow ? ['--depth=1'] : []), 'origin', sha]);
 }
 
-/** Replaces `dir` with `<sha>:<year>`, through a temp dir so no stale file survives. */
+/** Replaces `dir` with `<sha>:archive/<year>`, through a temp dir so no stale file survives. */
 function extract(root: string, year: string, sha: string, dir: string): void {
 	const tmp = mkdtempSync(join(root, 'archive', `.${year}-`));
 	const tar = join(tmp, 'build.tar');
-	git(root, ['archive', '--format=tar', `--output=${tar}`, sha, year]);
+	git(root, ['archive', '--format=tar', `--output=${tar}`, sha, `archive/${year}`]);
 	execFileSync('tar', ['-xf', tar, '-C', tmp]);
 	rmSync(dir, { recursive: true, force: true });
-	renameSync(join(tmp, year), dir);
+	renameSync(join(tmp, 'archive', year), dir);
 	rmSync(tmp, { recursive: true, force: true });
 }
 
@@ -79,7 +79,7 @@ export function ensureArchives(root = process.cwd(), log: (line: string) => void
 			extract(root, year, sha, dir);
 		} catch (error) {
 			throw new Error(
-				`archive/${year}: cannot get ${year}/ from commit ${sha} (${reason(error)}). Check the network, and that archive/sources.json pins a commit on origin/archives that has ${year}/.`,
+				`archive/${year}: cannot get it from commit ${sha} (${reason(error)}). Check the network, and that archive/sources.json pins a commit on origin/${year} that has archive/${year}/.`,
 				{ cause: error },
 			);
 		}

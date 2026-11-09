@@ -1,6 +1,6 @@
 /**
  * Past editions (ADR 0011): the ones archived here (`archive/<year>/`,
- * fetched from the `archives` branch at the commits `archive/sources.json`
+ * fetched from their year branches at the commits `archive/sources.json`
  * pins, ADR 0013) and the older ones still served from their own subdomains
  * by other repositories. Build time only: reads the file system.
  */

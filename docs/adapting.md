@@ -28,12 +28,13 @@ ended moves to `devfest.cz/<year>` as a frozen build
    hand. Its aftermovie, once out, goes into `AFTERMOVIES` in
    `src/lib/editions.ts` (the YouTube video id); the home page plays it
    under the edition's figures.
-2. **Publish it** ([ADR 0013](adr/0013-past-editions-live-on-the-archives-branch.md)):
-   the build is committed as `<year>/` on the `archives` branch, never on
-   `main` (`archive/` is ignored there). From a worktree of `archives`
-   (`git worktree add ../archives origin/archives`), copy `archive/<year>/`
-   to `<year>/`, commit it on a new branch and open a PR into `archives`.
-   Once it is merged, pin that commit in `archive/sources.json` through a
+2. **Publish it** ([ADR 0013](adr/0013-past-edition-builds-live-on-their-year-branch.md)):
+   the build is committed on the edition's year branch (cut as in "The
+   production branch" below), never on `main` (`archive/` is ignored
+   there). From a worktree of it (`git worktree add ../<year>-branch
+   origin/<year>`), copy `archive/<year>/` in, `git add -f archive/<year>`,
+   commit on a new branch and open a PR into `<year>`. Once it is merged,
+   pin the commit `<year>` then holds in `archive/sources.json` through a
    PR to `main`; `/<year>` goes live with the pin. Re-archiving a year
    that is already pinned: publish first, the next build replaces the
    local output with the pinned one.

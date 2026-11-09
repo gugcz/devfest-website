@@ -1,6 +1,6 @@
 # 0011. The root belongs to the next edition; past editions are frozen under `/<year>`
 
-- Status: accepted; where the builds are stored superseded by [0013](0013-past-editions-live-on-the-archives-branch.md)
+- Status: accepted; where the builds are stored superseded by [0013](0013-past-edition-builds-live-on-their-year-branch.md)
 - Date: 2026-11-08
 - PR: [#531](https://github.com/gugcz/devfest-website/pull/531); plans
   [2026-11-08-feat-edition-archive-and-teaser-plan.md](../plan/2026-11-08-feat-edition-archive-and-teaser-plan.md)

@@ -38,7 +38,7 @@ paths:
   (`src/integrations/redirect-guard.ts`), so turning a flag on deletes its
   redirect in the same change.
 - **Archives** (`archive/<year>/`) are frozen builds from
-  `npm run archive -- <year>`, kept on the `archives` branch and fetched at
+  `npm run archive -- <year>`, kept on its year branch and fetched at
   the commit `archive/sources.json` pins (`src/lib/archive-sources.ts`,
   ADR 0013); never edit one by hand, never commit one to `main`. A build
   under a base path works because `src/middleware.ts` rebases root-relative
