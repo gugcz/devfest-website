@@ -2,6 +2,23 @@
 @use '../styles/aether' as *;
 // The sign-off: the official logo at poster scale, then four columns, then
 // the folio line. Space separates the three, never a rule.
+
+// The grid's one measured fact: the longest link label on one line ("Code of
+// Conduct" in the action voice, about 11.1rem in Avenir Next, Helvetica Neue
+// and Arial). Every layout step below is derived from it, so while the footer
+// is at least this wide no label wraps. A longer label raises it and the
+// steps follow, up to about 11.85rem: past that $five-up outgrows `--maxw`
+// (76rem) and the five-column row never shows.
+$label-max: 11.5rem;
+$col-gap: 3rem;
+$col-gap-tight: 1.5rem;
+$brand-fr: 1.4;
+
+// The grid width each layout needs to keep every label column at $label-max.
+$five-up: (4 + $brand-fr) * $label-max + 4 * $col-gap;
+$four-up: 4 * $label-max + 3 * $col-gap;
+$two-up: 2 * $label-max + $col-gap-tight;
+
 .footer {
 	position: relative;
 	width: 100%;
@@ -19,6 +36,9 @@
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
+	// The grid steps on its own width, not the viewport's: the gutter and
+	// `maxw` sit between the two.
+	container: footer / inline-size;
 }
 
 /* ---- the logo ---- */
@@ -42,27 +62,45 @@
 	height: auto;
 }
 
+// One column first: where two would squeeze a label, and in a browser without
+// container queries (Safari < 16, Chrome < 105, Firefox < 110), which never
+// sees the steps below.
 .footer-grid {
 	display: grid;
-	// Brand · Attend · About · Event · Organizer.
-	grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
-	gap: 2.5rem 3rem;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 2.5rem $col-gap-tight;
 	align-items: start;
+}
 
-	// `em` breakpoints: they move with text zoom, so a zoomed reader gets
-	// wider columns instead of a clipped legal name (DEVF-49). Two columns,
-	// the brand on its own row above them.
-	@media (max-width: 45em) {
+// Each step adds columns only once every label still fits on one line: two
+// under the brand's own row, then four, then Brand · Attend · About · Event ·
+// Organizer in one row. In rem, so the steps move with text zoom (a zoomed
+// reader gets wider columns instead of a clipped legal name, DEVF-49) and
+// with the large-screen root scaling.
+@container footer (width >= #{$two-up}) {
+	.footer-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 2.5rem 1.5rem;
-
-		.col-brand {
-			grid-column: 1 / -1;
-		}
 	}
 
-	@media (max-width: 23.75em) {
-		grid-template-columns: minmax(0, 1fr);
+	.col-brand {
+		grid-column: 1 / -1;
+	}
+}
+
+@container footer (width >= #{$four-up}) {
+	.footer-grid {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		column-gap: $col-gap;
+	}
+}
+
+@container footer (width >= #{$five-up}) {
+	.footer-grid {
+		grid-template-columns: minmax(0, #{$brand-fr}fr) repeat(4, minmax(0, 1fr));
+	}
+
+	.col-brand {
+		grid-column: auto;
 	}
 }
 
@@ -197,7 +235,7 @@
 .org-link {
 	// The legal name is one unit — break before it, never inside (the NBSP
 	// in the markup agrees). Do not "fix" an overflow with
-	// `overflow-wrap: anywhere`; see `.footer-grid`.
+	// `overflow-wrap: anywhere`; see the column steps under `.footer-grid`.
 	white-space: nowrap;
 	// Back to prose inside the sentence; a persistent underline marks it
 	// as a link without colour alone (1.4.1).

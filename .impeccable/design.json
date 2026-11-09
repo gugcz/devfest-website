@@ -218,11 +218,15 @@
 			},
 			{
 				"name": "footer-two",
-				"value": "45em"
+				"value": "from 24.5rem of footer width (container query)"
 			},
 			{
-				"name": "footer-one",
-				"value": "23.75em"
+				"name": "footer-four",
+				"value": "from 55rem of footer width (container query)"
+			},
+			{
+				"name": "footer-five",
+				"value": "from 74.1rem of footer width (container query)"
 			},
 			{
 				"name": "aether-low-end",

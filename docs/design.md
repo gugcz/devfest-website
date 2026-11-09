@@ -346,7 +346,11 @@ ends on a centred closer or end line, then the footer.
 
 **The footer** is ink, up to `maxw`: the logo as artwork (at most 30rem),
 then a grid (a wider brand column and the link, event and organizer
-columns; two columns under 45em, one under 23.75em), then the folio line.
+columns), then the folio line. The grid steps on its own width (a
+container query), never letting a column fall under the longest link
+label (`$label-max` in `Footer.scss`): the brand on its own row above four
+columns, then two, then one, which is also all a browser without container
+queries gets. No label wraps while the footer is at least that wide.
 
 The `gutter` honours the safe areas. The cookie slip reserves its height at
 the bottom (`--cookie-slip-h`) so it never hides the last line.
