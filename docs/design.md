@@ -328,8 +328,10 @@ fixed menu bar sits over it; the stage pads `header-h` + 1.5rem.
 **The veil** starts under the stage: a gradient from transparent to
 `ink-veil` over the first 14rem, then solid. Home bands are centred single
 columns at the `measure`, separated by `section` top padding; partners
-widen to `maxw`; the prints step out to four columns from 900px, past the
-measure by up to 14rem a side, and the film under them to the same width.
+widen to `maxw`; the facts take back the band's own gutter, so their three
+columns span the whole measure; the prints step out to four columns from
+900px, past the measure by up to 14rem a side, and the film under them to
+the same width.
 
 **A subpage** opens on its own stage (`SubpageHero`, at least 22rem, up to
 58svh): the painting behind, anchored on the title; the title and one note
@@ -458,9 +460,12 @@ with a faint brass edge, never tilted, never shadowed, never rounded. The
 hidden).
 
 ### Facts and figures
-Description lists, centred and wrapping. A fact: brass term over an ivory
-value, an optional muted note. A figure: the number in brass light over
-its muted term.
+Description lists, centred. Facts sit in equal columns, three in a row
+(below 720px the first takes the row and the other two share the next;
+under 20em they stack), so each centres on its column and the row on the
+lead. A fact: brass term
+over an ivory value, an optional muted note. A figure: the number in brass
+light over its muted term.
 
 ### Inputs / Fields
 - **Style:** a 1px `field-border` on an ink plate (70%), ivory text, square,
