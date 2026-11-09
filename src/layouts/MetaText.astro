@@ -1,0 +1,15 @@
+---
+/**
+ * A `<meta>` whose content a link preview shows as text (the description,
+ * `og:title`, the image alt). Written as HTML, not as an Astro attribute, so
+ * an `&` stays bare where HTML allows it (`previewText`); Astro would write
+ * `&amp;`, which some unfurlers show as it is.
+ */
+import { previewMeta, type PreviewMetaKey } from '../lib/preview-text';
+
+type Props = PreviewMetaKey & { content: string };
+
+const { content, ...key } = Astro.props;
+---
+
+<Fragment set:html={previewMeta(key, content)} />

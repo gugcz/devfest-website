@@ -53,7 +53,11 @@ paths:
   name the edition's year.
   Event offers come from `/api/tickets` at build time (`tickets-static.ts`).
   Sitemap via `@astrojs/sitemap`. Share pages and `/invite/*` set their own
-  OG image.
+  OG image. Text a link preview shows (`<title>`, description, `og:title`,
+  `og:description`, image alt) goes through `previewText`
+  (`src/lib/preview-text.ts`): `<title set:html={previewText(…)} />` and
+  `<MetaText>`, never `content={…}`. Astro writes every `&` as `&amp;`, and
+  some unfurlers show it as it is.
 - **Readers without script** (assistants, link readers) get the data as
   build-time HTML: `SpeakerIndex`, `TalkIndex`, `TicketIndex` in a `.no-js`
   block under the island, and `/llms.txt` (`src/pages/llms.txt.ts`). A page

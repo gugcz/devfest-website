@@ -93,8 +93,9 @@ edited PR body keeps its old text in the public edit history.
   change there breaks its next copy.
 - `src/layouts/`: `Head.astro` (meta, OG, JSON-LD every layout shares),
   `BaseLayout.astro` (the aether chrome; tokens and global SCSS in
-  `BaseLayout.scss`), `Share.astro` (share-page preview, then forward)
-  and `Redirect.astro` (`/press`, `/sessions`).
+  `BaseLayout.scss`), `Share.astro` (share-page preview, then forward),
+  `MetaText.astro` (a preview `<meta>` with a bare `&`) and
+  `Redirect.astro` (`/press`, `/sessions`).
 - `functions/src/<domain>/`: Cloud Functions per domain (`tickets`,
   `sessionize`, `lineup`, `invoice`, `workshops`); shared helpers in `lib/`,
   option presets in `options.ts`.

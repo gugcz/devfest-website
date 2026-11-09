@@ -5,8 +5,10 @@
  * theme colour, icons, fonts and scripts around it.
  */
 import { jsonLdText } from '../lib/structured-data';
+import { previewText } from '../lib/preview-text';
 import { twitterHandle } from '../lib/socials';
 import config from '../site.config';
+import MetaText from './MetaText.astro';
 
 interface Props {
 	title: string;
@@ -32,8 +34,8 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, ''
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="generator" content={Astro.generator} />
 <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
-<title>{title}</title>
-<meta name="description" content={description} />
+<title set:html={previewText(title)} />
+<MetaText name="description" content={description} />
 {
 	!noindex && (
 		<>
@@ -50,23 +52,23 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href.replace(/\/$/, ''
 <meta property="og:url" content={canonicalUrl} />
 <meta property="og:site_name" content={config.event.name} />
 <meta property="og:locale" content="en_US" />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
+<MetaText property="og:title" content={title} />
+<MetaText property="og:description" content={description} />
 <meta property="og:image" content={ogImage} />
 <meta property="og:image:secure_url" content={ogImage} />
 <meta property="og:image:type" content={ogImageType} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content={ogImageAlt} />
+<MetaText property="og:image:alt" content={ogImageAlt} />
 <link rel="image_src" href={ogImage} />
 
 {/* Twitter */}
 <meta name="twitter:card" content="summary_large_image" />
 {twitter && <meta name="twitter:site" content={twitter} />}
-<meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
+<MetaText name="twitter:title" content={title} />
+<MetaText name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
-<meta name="twitter:image:alt" content={ogImageAlt} />
+<MetaText name="twitter:image:alt" content={ogImageAlt} />
 
 {/* Structured Data */}
 {!noindex && jsonLd.length > 0 && <script type="application/ld+json" set:html={jsonLdText(jsonLd)} />}
