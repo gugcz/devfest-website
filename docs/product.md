@@ -67,9 +67,10 @@ edition is not announced; copy never says "one day".
 ## Capabilities and Constraints
 
 - **The yearly switch.** When an edition is over, `npm run archive`
-  freezes it into `archive/<year>/` (its lineup, speaker photos and facts
-  included) and `config.event` moves to the next edition, its day, venue and
-  audience unset until announced. Feature flags hide what the next edition
+  freezes it (its lineup, speaker photos and facts included), the build is
+  kept on its year branch and pinned from `main`, and `config.event`
+  moves to the next edition, its day, venue and audience unset until
+  announced. Feature flags hide what the next edition
   does not have yet (`lineup`, `venue`, `tickets`, `invoice`, `workshops`,
   `invite`, `partners`, `attending`); their paths answer 302 to the
   archive's copy, the per-edition share pages 301. The archive is indexed,
@@ -145,7 +146,8 @@ edition is not announced; copy never says "one day".
   Open Graph tags at build time; the press kit is in `public/press-kit/`;
   partner logos are in `src/assets/partners/<tier>/`.
 - Event facts (date, venue, coordinates, `.ics`) in `src/lib/event.ts`.
-- The 2026 lineup as it was on archive day: `archive/2026/api/lineup.json`.
+- The 2026 lineup as it was on archive day: `archive/2026/api/lineup.json`
+  on the `2026` branch (and locally after a build).
 - Aftermovies by year: `AFTERMOVIES` in `src/lib/editions.ts` (YouTube
   video ids; 2026 has one).
 - **Absent:** testimonials, attendance figures beyond what page copy states,

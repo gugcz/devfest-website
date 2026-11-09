@@ -8,6 +8,7 @@ import config from './src/site.config';
 import featureRoutes from './src/integrations/feature-routes';
 import archives, { archivedPages } from './src/integrations/archives';
 import redirectGuard from './src/integrations/redirect-guard';
+import { ensureArchives } from './src/lib/archive-sources';
 
 const BUILD_DATE = new Date().toISOString();
 
@@ -24,6 +25,10 @@ if (archive && config.event.edition !== Number(archive)) {
 if (archive && !config.event.date) {
     throw new Error(`PUBLIC_ARCHIVE=${archive}: src/site.config.ts has no event.date; an edition is archived once it has taken place.`);
 }
+// Past editions' builds come from their year branches at the commits
+// `archive/sources.json` pins (ADR 0013). Every build, archive builds too,
+// fetches the ones it lacks before reading them.
+ensureArchives();
 const ARCHIVED = archive ? new Map<string, string | undefined>() : archivedPages();
 
 // Per-path sitemap priority; anything unlisted falls back to 0.6.

@@ -24,26 +24,36 @@ ended moves to `devfest.cz/<year>` as a frozen build
    still states about its last edition), fails on any URL outside
    `/<year>`, and writes `archive/<year>/`. A section already switched off
    goes back on for the archive with `PUBLIC_FEATURES_ON` (e.g.
-   `PUBLIC_FEATURES_ON=tickets npm run archive -- 2027`). Commit it whole;
-   never edit it by hand. Its aftermovie, once out, goes into
-   `AFTERMOVIES` in `src/lib/editions.ts` (the YouTube video id); the home
-   page plays it under the edition's figures.
-2. **Move `config.event` to the next edition** in `src/site.config.ts`:
+   `PUBLIC_FEATURES_ON=tickets npm run archive -- 2027`). Never edit it by
+   hand. Its aftermovie, once out, goes into `AFTERMOVIES` in
+   `src/lib/editions.ts` (the YouTube video id); the home page plays it
+   under the edition's figures.
+2. **Publish it** ([ADR 0013](adr/0013-past-edition-builds-live-on-their-year-branch.md)):
+   the build is committed on the edition's year branch (cut as in "The
+   production branch" below), never on `main` (`archive/` is ignored
+   there). From a worktree of it (`git worktree add ../<year>-branch
+   origin/<year>`), copy `archive/<year>/` in, `git add -f archive/<year>`,
+   commit on a new branch and open a PR into `<year>`. Once it is merged,
+   pin the commit `<year>` then holds in `archive/sources.json` through a
+   PR to `main`; `/<year>` goes live with the pin. Re-archiving a year
+   that is already pinned: publish first, the next build replaces the
+   local output with the pinned one.
+3. **Move `config.event` to the next edition** in `src/site.config.ts`:
    `edition`, `season` and `city` as announced; `date`, `venue` and
    `audience` stay unset until they are. Nothing that needs a day renders
    without `date` (the countdown, `/calendar.ics`, the `Event` JSON-LD),
    and the build refuses a flag that needs one.
-3. **Turn off what is not ready**: `lineup` until the agenda is out,
+4. **Turn off what is not ready**: `lineup` until the agenda is out,
    `venue` until the venue is announced, `tickets` (and `invoice`,
    `invite`, `attending`) until the sale, `workshops`, `partners`.
-4. **Redirect what is off** (`firebase.json` → `redirects`): a **302** from
+5. **Redirect what is off** (`firebase.json` → `redirects`): a **302** from
    every path the next edition will reuse to its `/<year>/…` copy, a **301**
    from the edition's share pages, by id (`npm run archive` prints the two
    entries), so the next edition's own ids stay free. The build
    fails when a redirect matches one of its pages
    (`src/integrations/redirect-guard.ts`), because Hosting applies
    redirects before static files.
-5. **The year-bound assets**: `public/df27-logo.svg`, the favicon
+6. **The year-bound assets**: `public/df27-logo.svg`, the favicon
    (`public/favicon-2027.svg`, and `favicon.ico`, `apple-touch-icon.png`,
    `icon-192.png`, `icon-512.png` rendered from it), `public/og-image.jpg`
    (the share card), `public/logo.png` (the `Organization` logo in the
@@ -51,9 +61,9 @@ ended moves to `devfest.cz/<year>` as a frozen build
    description), `pitch` in the config (no topics before the lineup), and
    the season lettering in `src/components/aether/SeasonMark.astro` (drawn
    for "Fall 2027"; any other season is set as type until it is drawn).
-6. **After the deploy**: submit `https://devfest.cz/sitemap-index.xml` in
+7. **After the deploy**: submit `https://devfest.cz/sitemap-index.xml` in
    Search Console; it lists the archive's pages too.
-7. **As the edition takes shape**: set `date`, `venue`, `audience`; turn a
+8. **As the edition takes shape**: set `date`, `venue`, `audience`; turn a
    flag on only once its section is in the current design (`docs/design.md`;
    a surface still on `docs/design-2026.md` stays off), and delete its
    redirect in the same change. Then "A new edition" below.

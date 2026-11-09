@@ -19,7 +19,8 @@ certain files is a [path-scoped rule](#path-scoped-rules).
 `main` is production: a merge into it deploys to devfest.cz. **Only the
 maintainer merges, pushes to it, or deploys.** An agent's work ends at: branch
 pushed, PR opened, CI reported. A year branch (`2026`) is a past edition,
-frozen at its last commit; it never deploys and nobody pushes to it.
+frozen; it never deploys, and its one later commit is its frozen build
+(`archive/<year>/`, a PR the maintainer merges; ADR 0013).
 
 - Never `git push origin main` (or a year branch), `gh pr merge`,
   `firebase deploy`, dispatch a deploy workflow, or cut a release tag.
@@ -79,7 +80,10 @@ edited PR body keeps its old text in the public edit history.
   pages, the 404, `llms.txt.ts` and `robots.txt.ts`.
 - `archive/<year>/`: past editions, frozen builds served at `/<year>`
   (`npm run archive`, `src/integrations/archives.ts`, `src/lib/editions.ts`).
-  Never edited by hand, excluded from the checks.
+  Each lives on its year branch; `main` tracks only
+  `archive/sources.json`, the pinned commits, and every build fetches them
+  (`src/lib/archive-sources.ts`, ADR 0013). Never edited by hand, excluded
+  from the checks.
 - `src/components/`: `.astro` sections and React islands (`.tsx`,
   `client:load`) with co-located `.module.scss`; `aether/` holds the
   painting, the season mark, the portal and the cookie slip.
@@ -121,7 +125,7 @@ edited PR body keeps its old text in the public edit history.
 | Types | `npm run check` (`astro check`) |
 | Site tests | `npm run test:site` (`node --test` on `src/**/*.test.ts`, types stripped by Node) |
 | Flags off | `npm run flags-off` (two builds with feature flags off; fails on a route, sitemap entry or link left behind) |
-| Archive an edition | `npm run archive -- <year>` (once a year, while `config.event` is that edition; writes `archive/<year>/`; `docs/adapting.md`) |
+| Archive an edition | `npm run archive -- <year>` (once a year, while `config.event` is that edition; writes `archive/<year>/`, published on its year branch and pinned in `archive/sources.json`; `docs/adapting.md`) |
 | Cognitive complexity | `npm run complexity` (`sonarjs/cognitive-complexity`, max 15) |
 | Function tests | `npm --prefix functions test` (`node --test`, stubs `fetch`) |
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |

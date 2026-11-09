@@ -22,8 +22,11 @@
  *    live-only page; lists what a script bundle names, for a look.
  * 5. Replaces `archive/<year>/` with the result, plus `edition.json`: the
  *    edition's facts (date, venue, audience) that the live site states
- *    about its last edition once `config.event` has moved on. Prints the
- *    `firebase.json` redirects for the edition's share pages.
+ *    about its last edition once `config.event` has moved on, and drops the
+ *    year's fetch stamp so the next live build refetches the pinned build.
+ *    Prints the `firebase.json` redirects for the edition's share pages.
+ *    The output is published on its year branch and pinned in
+ *    `archive/sources.json` (ADR 0013, `docs/adapting.md`).
  *
  * `npm run archive -- <year> --facts` writes only `archive/<year>/edition.json`
  * (for an archive made before the file existed).
@@ -49,6 +52,8 @@ const DATA = path.join(WORK, 'data');
 const PHOTOS = path.join(WORK, 'speaker-photos');
 const OUT = path.join(WORK, 'site');
 const TARGET = path.resolve('archive', year);
+/** `ensureArchives()` (src/lib/archive-sources.ts) trusts a year this stamp names. */
+const STAMP = `${TARGET}.source`;
 /** Off in the archive: they belong to the live site (the app's pages, the newsletter form). */
 const LIVE_ONLY = ['app', 'newsletter'];
 /** Pages only the live site serves; mirrors `LIVE_ONLY_PATHS` in `src/lib/base.ts`. */
@@ -81,6 +86,7 @@ const FACTS = `${JSON.stringify(await editionFacts(), null, '\t')}\n`;
 if (factsOnly) {
 	await mkdir(TARGET, { recursive: true });
 	await writeFile(path.join(TARGET, 'edition.json'), FACTS);
+	await rm(STAMP, { force: true });
 	console.log(`✓ archive/${year}/edition.json`);
 	process.exit(0);
 }
@@ -213,6 +219,7 @@ if (notes.size > 0) {
 
 // 5. Replace the archive.
 await rm(TARGET, { recursive: true, force: true });
+await rm(STAMP, { force: true });
 await cp(OUT, TARGET, { recursive: true });
 let bytes = 0;
 let files = 0;

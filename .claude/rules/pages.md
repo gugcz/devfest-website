@@ -38,9 +38,11 @@ paths:
   (`src/integrations/redirect-guard.ts`), so turning a flag on deletes its
   redirect in the same change.
 - **Archives** (`archive/<year>/`) are frozen builds from
-  `npm run archive -- <year>`; never edit one by hand. A build under a base
-  path works because `src/middleware.ts` rebases root-relative URLs in
-  rendered HTML; code the middleware never sees (islands, scripts, absolute
+  `npm run archive -- <year>`, kept on its year branch and fetched at
+  the commit `archive/sources.json` pins (`src/lib/archive-sources.ts`,
+  ADR 0013); never edit one by hand, never commit one to `main`. A build
+  under a base path works because `src/middleware.ts` rebases root-relative
+  URLs in rendered HTML; code the middleware never sees (islands, scripts, absolute
   URLs, `/api/*` reads) uses `withBase()`, `absoluteUrl()`, `liveUrl()` and
   `apiUrl()` from `src/lib/base.ts`. The middleware also gives every link
   between the two builds (live site ↔ archive) `data-astro-reload`, so

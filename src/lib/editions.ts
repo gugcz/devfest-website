@@ -1,12 +1,13 @@
 /**
- * Past editions (ADR 0011): the ones archived in this repository
- * (`archive/<year>/`, written by `npm run archive`) and the older ones still
- * served from their own subdomains by other repositories. Build time only:
- * reads the file system.
+ * Past editions (ADR 0011): the ones archived here (`archive/<year>/`,
+ * fetched from their year branches at the commits `archive/sources.json`
+ * pins, ADR 0013) and the older ones still served from their own subdomains
+ * by other repositories. Build time only: reads the file system.
  */
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import config from '../site.config';
+import { readArchiveSources } from './archive-sources';
 import { ARCHIVE, isUnder, liveUrl } from './base';
 import type { FeatureFlag } from './features';
 import { isDisplayableSession, sessionFromDoc } from './sessions';
@@ -27,13 +28,13 @@ export interface PastEdition {
 	external: boolean;
 }
 
-/** The years archived here, oldest first: every `archive/<year>/`. */
+/**
+ * The years archived here, oldest first: every year `archive/sources.json`
+ * pins. Read from the pins, not the directory, so a build without a fetched
+ * archive fails instead of dropping it.
+ */
 export function archivedEditions(): string[] {
-	if (!existsSync(ARCHIVE_ROOT)) return [];
-	return readdirSync(ARCHIVE_ROOT, { withFileTypes: true })
-		.filter((entry) => entry.isDirectory() && /^\d{4}$/.test(entry.name))
-		.map((entry) => entry.name)
-		.sort();
+	return Object.keys(readArchiveSources()).sort();
 }
 
 /**

@@ -44,3 +44,8 @@ CLAUDE.local.md
 .impeccable/live/inject-journal.json
 .agent_context/
 .archive/
+
+# Past editions' frozen builds: fetched from their year branches at the
+# commits archive/sources.json pins (ADR 0013), never committed here.
+archive/*
+!archive/sources.json
