@@ -134,11 +134,11 @@ function animate(
 	let slow = { sum: 0, count: 0 };
 	let lost = false;
 	/** The time of the frame on the canvas, repainted after a resize. */
-	let shown = STILL_AT;
+	let shown = START_OFFSET;
 
 	function resize(): void {
-		cssW = window.innerWidth;
-		cssH = window.innerHeight;
+		cssW = Math.max(1, canvas.clientWidth);
+		cssH = Math.max(1, canvas.clientHeight);
 		const dpr = window.devicePixelRatio || 1;
 		const scale = Math.min(dpr, Math.sqrt(maxPixels / (cssW * cssH))) * quality;
 		canvas.width = Math.max(2, Math.round(cssW * scale));
@@ -242,7 +242,12 @@ function animate(
 	};
 
 	window.addEventListener('pointermove', onPointer, { passive: true });
-	window.addEventListener('resize', onResize);
+	// Sized by the canvas's box, not the window: scrolling on a phone slides
+	// the URL bar and resizes the window, while the box (`100lvh`,
+	// `AetherCanvas.astro`) stays put, so the painting does not jump. Its
+	// first callback, on the next frame, repaints `shown`.
+	const sized = new ResizeObserver(onResize);
+	sized.observe(canvas);
 	const onMotionChange = (): void => {
 		if (!lost) run();
 	};
@@ -255,7 +260,7 @@ function animate(
 		watch.disconnect();
 		cancelAnimationFrame(raf);
 		window.removeEventListener('pointermove', onPointer);
-		window.removeEventListener('resize', onResize);
+		sized.disconnect();
 		reduced.removeEventListener('change', onMotionChange);
 		canvas.removeEventListener('webglcontextlost', onLost);
 		gl.getExtension('WEBGL_lose_context')?.loseContext();
