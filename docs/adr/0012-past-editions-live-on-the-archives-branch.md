@@ -23,7 +23,9 @@ deploy workflow that runs on a push to it.
 - **The builds live on `archives`**, an orphan branch with one top-level
   `<year>/` per edition, exactly what `npm run archive -- <year>` wrote. It
   has no workflows, so nothing runs or deploys from it. A new edition is a
-  PR into it; it carries the same PR-required ruleset as `main`.
+  PR into it. The maintainer gives it `main`'s ruleset (PRs only, no
+  force-push, no deletion): a force-push could orphan a pinned commit and
+  fail every build.
 - **`main` pins them.** `archive/sources.json` maps each archived year to a
   commit on `archives`; `.gitignore` ignores the rest of `archive/`. A pin,
   not the branch tip: only a PR to `main` that moves the pin changes what

@@ -58,7 +58,7 @@ npm run verify
 npm run archive -- 2027
 ```
 
-`archive/<year>/` is a frozen build: it lives on the `archives` branch, `archive/sources.json` pins the commit, and every build fetches it the first time it is missing ([ADR 0012](docs/adr/0012-past-editions-live-on-the-archives-branch.md)). The live build copies it into `dist/` and serves it at `/<year>`. Never edit it by hand; `npm run preview` after a build shows it. Publishing a new one: `docs/adapting.md` → "The yearly switch".
+`archive/<year>/` is a frozen build: it lives on the `archives` branch, `archive/sources.json` pins the commit, and every command that loads `astro.config.ts` (`dev`, `build`, `check`) fetches it when it is missing or its pin moved ([ADR 0012](docs/adr/0012-past-editions-live-on-the-archives-branch.md)). The live build copies every pinned year into `dist/` and serves it at `/<year>`. Never edit it by hand; once it is pinned, `npm run preview` after a build shows it. Publishing a new one: `docs/adapting.md` → "The yearly switch".
 
 `main` is the production branch. A merge into it deploys the site
 (`firebase-hosting-merge.yml`) and, when `functions/**` or `firebase.json`

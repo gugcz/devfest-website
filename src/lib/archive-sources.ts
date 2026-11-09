@@ -5,7 +5,7 @@
  * `archive/<year>/` before a build reads it. Build time only.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /** Year → the commit on `archives` that holds its build. */
@@ -49,9 +49,7 @@ function fetchCommit(root: string, sha: string): void {
 
 /** Replaces `dir` with `<sha>:<year>`, through a temp dir so no stale file survives. */
 function extract(root: string, year: string, sha: string, dir: string): void {
-	const tmp = `${dir}.tmp`;
-	rmSync(tmp, { recursive: true, force: true });
-	mkdirSync(tmp, { recursive: true });
+	const tmp = mkdtempSync(join(root, 'archive', `.${year}-`));
 	const tar = join(tmp, 'build.tar');
 	git(root, ['archive', '--format=tar', `--output=${tar}`, sha, year]);
 	execFileSync('tar', ['-xf', tar, '-C', tmp]);

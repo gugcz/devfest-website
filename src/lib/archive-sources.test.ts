@@ -7,7 +7,7 @@ import { after, before, describe, it } from 'node:test';
 import { ensureArchives, readArchiveSources } from './archive-sources.ts';
 
 const git = (cwd: string, ...args: string[]): string =>
-	execFileSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', ...args], {
+	execFileSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', '-c', 'commit.gpgsign=false', ...args], {
 		cwd,
 		encoding: 'utf8',
 	}).trim();
@@ -84,6 +84,21 @@ describe('ensureArchives', () => {
 		assert.equal(readFileSync(join(site, 'archive', '2026', 'index.html'), 'utf8'), 'second');
 		assert.equal(existsSync(join(site, 'archive', '2026', 'old.html')), false);
 		assert.equal(readFileSync(join(site, 'archive', '2026.source'), 'utf8').trim(), sha);
+	});
+
+	it('fetches one commit into a shallow clone and keeps it shallow', () => {
+		const shallow = mkdtempSync(join(tmpdir(), 'archives-shallow-'));
+		try {
+			git(shallow, 'clone', '-q', '--depth=1', `file://${origin}`, '.');
+			const sha = commit(origin, { '2026/index.html': 'third' });
+			pin(shallow, { 2026: sha });
+
+			ensureArchives(shallow, log);
+			assert.equal(readFileSync(join(shallow, 'archive', '2026', 'index.html'), 'utf8'), 'third');
+			assert.equal(git(shallow, 'rev-parse', '--is-shallow-repository'), 'true');
+		} finally {
+			rmSync(shallow, { recursive: true, force: true });
+		}
 	});
 
 	it('fails by year and commit when the pin cannot be fetched', () => {

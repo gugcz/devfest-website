@@ -68,8 +68,9 @@ edition is not announced; copy never says "one day".
 
 - **The yearly switch.** When an edition is over, `npm run archive`
   freezes it (its lineup, speaker photos and facts included), the build is
-  kept on the `archives` branch and pinned from `main`, and `config.event` moves to the next edition, its day, venue and
-  audience unset until announced. Feature flags hide what the next edition
+  kept on the `archives` branch and pinned from `main`, and `config.event`
+  moves to the next edition, its day, venue and audience unset until
+  announced. Feature flags hide what the next edition
   does not have yet (`lineup`, `venue`, `tickets`, `invoice`, `workshops`,
   `invite`, `partners`, `attending`); their paths answer 302 to the
   archive's copy, the per-edition share pages 301. The archive is indexed,

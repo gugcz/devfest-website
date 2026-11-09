@@ -41,7 +41,7 @@ Visitors see no change: `devfest.cz/2026` serves the same bytes.
    commit on `archives`. `.gitignore` ignores `archive/*` except that file.
    A pinned SHA, not the branch tip: only a PR to `main` that moves the pin
    changes production.
-3. **One fetch point: `ensureArchives()`** in `src/integrations/archives.ts`,
+3. **One fetch point: `ensureArchives()`** in `src/lib/archive-sources.ts`,
    called at the top of `astro.config.ts` for every build, archive builds
    included (an archive's home states its last edition through
    `lastEdition()`). Every entry point loads the config (`dev`, `build`,
@@ -100,7 +100,8 @@ Visitors see no change: `devfest.cz/2026` serves the same bytes.
 - **Files touched:**
   - new: `archive/sources.json`,
     `docs/adr/0012-past-editions-live-on-the-archives-branch.md`
-  - code: `.gitignore`, `astro.config.ts`, `src/integrations/archives.ts`,
+  - code: `.gitignore`, `astro.config.ts`, `src/lib/archive-sources.ts`
+    (+ `.test.ts`),
     `src/lib/editions.ts`, `scripts/archive.mjs`
   - deleted: `archive/2026/**`
   - docs: `docs/adr/0011-root-for-the-next-edition-archives-under-the-year.md`
@@ -150,7 +151,7 @@ VERIFICATION COMMAND: test "$(git ls-files archive)" = "archive/sources.json" &&
 - **Build needs the network once per pin**; offline without the stamp, it
   fails with the fix in the message.
 - **Re-archiving a pinned year** locally is overwritten by the next live
-  build; publish from `.archive/<year>/site` first (`docs/adapting.md`).
+  build; publish `archive/<year>/` first (`docs/adapting.md`).
 
 ## Definition of done
 
