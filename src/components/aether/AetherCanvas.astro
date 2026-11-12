@@ -13,18 +13,25 @@
 	import { startAether } from '../../lib/aether';
 
 	let stop: (() => void) | null = null;
+	let painting: Element | null = null;
 
 	// Once per page: <ClientRouter /> keeps this module alive across soft
 	// navigations, so it starts on every page that has the canvas and stops
-	// (freeing the GPU) before the page is swapped out.
+	// (freeing the GPU) before the page is swapped out. Astro also fires
+	// `astro:page-load` on the window's `load`, which can come after a soft
+	// navigation: the canvas already painting is left as it is (a canvas
+	// handed to the painting's worker cannot be handed over twice).
 	document.addEventListener('astro:page-load', () => {
+		const canvas = document.getElementById('aether');
+		if (canvas && canvas === painting) return;
 		stop?.();
 		stop = null;
-		const canvas = document.getElementById('aether');
+		painting = canvas;
 		const anchor = document.querySelector('[data-aether-anchor]');
 		if (canvas instanceof HTMLCanvasElement && anchor instanceof HTMLElement) stop = startAether(canvas, anchor);
 	});
 	document.addEventListener('astro:before-swap', () => {
+		painting = null;
 		stop?.();
 		stop = null;
 	});

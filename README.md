@@ -146,9 +146,12 @@ The RTDB ruleset is project-global, so it lives in the app repository ([`ryzizub
 ### App Check
 
 reCAPTCHA Enterprise in `src/lib/firebase.ts`, committed public key
-`APPCHECK_SITE_KEY`. Inits on page load. Only gated surface:
-`submitInvoiceCallable` (`enforceAppCheck: true`). **Do not** enforce on
-`ticketsWebhook` (HMAC, external caller) or the schedulers.
+`APPCHECK_SITE_KEY`. Starts only on the pages with a callable form: the
+invoice form when it mounts, the workshop sign-in
+([ADR 0014](docs/adr/0014-app-check-only-where-a-callable-runs.md)). Gated
+surfaces: `submitInvoiceCallable` and `workshopRegistrationCallable`
+(`enforceAppCheck: true`). **Do not** enforce on `ticketsWebhook` (HMAC,
+external caller) or the schedulers.
 
 Setup:
 
@@ -159,7 +162,8 @@ Setup:
    point it at that reCAPTCHA Enterprise key. (Per-environment override: set
    `PUBLIC_FIREBASE_APPCHECK_SITE_KEY` in `.env` to use a different key ID.)
 2. **Local dev.** Set `PUBLIC_FIREBASE_APPCHECK_DEBUG_TOKEN=true` in `.env`, load
-   the site, copy the debug token from the console, and register it under
+   a page with a callable form (`/invoice`, `/workshops`; their flags on),
+   copy the debug token from the console, and register it under
    App Check → Apps → Manage debug tokens. Leave this empty in production.
 3. **Watch metrics.** App Check → APIs shows the verified-vs-unverified split for
    Cloud Functions; confirm real invoice submissions are verified.

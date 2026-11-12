@@ -189,7 +189,7 @@ state of the code today; changing it is a normal design decision).
 | `src/layouts/BaseLayout.astro` | the shared SVG defs: the `aether-ink` tremor filter and the `aether-brass` lettering gradient |
 | `src/components/aether/` | the canvas, the season mark, the portal, the cookie slip |
 | `src/components/` | `Menu`, `Footer`, `SubpageHero`, `EndLine`, `NextStep`, `Closer`, `NewsletterForm` in the aether |
-| `src/lib/aether/` | the WebGL painting (`index.ts` loop, `shader.ts`, `textures.ts`) |
+| `src/lib/aether/` | the WebGL painting (`index.ts` on the page, `worker.ts` around `painter.ts`, the loop; `shader.ts`, `textures.ts`) |
 | `src/pages/index.scss` | the home page: the stage, the veil, the bands |
 
 Components read the role aliases (`--color-accent` is brass,
@@ -322,7 +322,9 @@ uppercase.
 centred column with `stage-gap` between the logo (at most 860px), the
 season mark (or, once announced, the date in type), the stage line and the
 portals, which sit slightly lower (an extra 6–18px) and side by side where
-both fit. `rise` brings them in in order (0, 0.25s, 0.4s, 0.55s). The
+both fit. `rise` brings them in in order (0, 0.25s, 0.4s, 0.55s): a 14px
+rise with no fade, so the stage is there from the first paint (a browser
+takes nothing first painted at opacity 0 as the page's largest paint). The
 fixed menu bar sits over it; the stage pads `header-h` + 1.5rem.
 
 **The veil** starts under the stage: a gradient from transparent to
@@ -379,7 +381,10 @@ else glows.
 **[CURRENT]** `AetherCanvas.astro` runs behind every stage: the home page
 and every subpage's head. It is a fixed WebGL 1 canvas at
 z-index -1 (over the root's ground, under every block), fading in over
-1.8s. It is as tall as the large viewport (`100lvh`), so a phone's URL bar
+1.8s. It paints in a worker (the canvas handed over as an
+`OffscreenCanvas`), so drawing its textures, building its shader and every
+frame cost the page's main thread nothing; a browser that cannot hand a
+canvas over, or has no WebGL in a worker, paints on the main thread. It is as tall as the large viewport (`100lvh`), so a phone's URL bar
 sliding in or out while scrolling never resizes it. It paints smoke, the sigil (centred on the element marked
 `data-aether-anchor`: the logo, a subpage's title), the traces with pulses,
 embers, the hatched vignette and paper grain; a lamp follows the pointer
@@ -395,7 +400,8 @@ its ends (`overscroll-behavior-y: none` on the root): pulled past the footer
 it would lift off the fixed painting and bare a band of it.
 
 **[MUST]** Under `prefers-reduced-motion` the painting is one still frame.
-Without WebGL the root's gradients are the painting.
+Without WebGL, or with only a software rasterizer (no GPU: it would spend a
+whole CPU core per frame), the root's gradients are the painting.
 
 ## Shapes
 

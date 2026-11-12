@@ -14,10 +14,7 @@ const firebaseConfig = config.site.firebase;
 
 let appInstance: FirebaseApp | null = null;
 function getApp(): FirebaseApp {
-	if (!appInstance) {
-		appInstance = initializeApp(firebaseConfig);
-		initAppCheck(appInstance);
-	}
+	appInstance ??= initializeApp(firebaseConfig);
 	return appInstance;
 }
 
@@ -26,8 +23,9 @@ function getApp(): FirebaseApp {
 const APPCHECK_SITE_KEY = config.site.appCheckSiteKey;
 
 let appCheckInstance: AppCheck | null = null;
-/** Initialise App Check (reCAPTCHA Enterprise) for `submitInvoiceCallable`,
- * its only consumer. No-ops on the server and without a site key. */
+/** Initialise App Check (reCAPTCHA Enterprise) for the callables
+ * (`submitInvoiceCallable`, `workshopRegistrationCallable`). No-ops on the
+ * server and without a site key. */
 function initAppCheck(app: FirebaseApp): void {
 	if (appCheckInstance) return;
 	if (typeof window === 'undefined') return;
@@ -53,9 +51,17 @@ function initAppCheck(app: FirebaseApp): void {
 }
 
 
-/** The initialised FirebaseApp (App Check already wired) — e.g. for `getFunctions(app)`. */
+/**
+ * The initialised FirebaseApp with App Check wired, for a callable
+ * (`getFunctions(app)`). App Check loads reCAPTCHA Enterprise, a script and
+ * a frame from Google, so only a page with a callable form starts it: the
+ * invoice form when it mounts, the workshop sign-in (ADR 0014). Pages
+ * without one never load it.
+ */
 export function getFirebaseApp(): FirebaseApp {
-	return getApp();
+	const app = getApp();
+	initAppCheck(app);
+	return app;
 }
 
 /**
@@ -124,9 +130,6 @@ let lastPageLocation: string | null = null;
  */
 export function initAnalytics(): Promise<void> {
 	if (typeof window === 'undefined') return Promise.resolve();
-	// App Check is a security mechanism (legitimate interest), not analytics: it
-	// runs in every environment and regardless of consent, hence before both gates.
-	getApp();
 	if (readConsent() !== 'accepted') return Promise.resolve();
 	analyticsInit ??= (async () => {
 		try {

@@ -9,7 +9,8 @@
  *   line, G the distance along it, B a per-trace seed that times its pulse.
  *
  * Every stroke wavers and tapers like ink. Seeded, so every visit draws the
- * same picture.
+ * same picture. Drawn on an `OffscreenCanvas` in the painting's worker, on
+ * a page canvas where it paints on the main thread.
  */
 
 const TAU = Math.PI * 2;
@@ -22,7 +23,9 @@ export const TRACE_EXTENT = 1.3;
 /** The outer ring's long and short ticks spell this word in ASCII. */
 const TICK_MESSAGE = 'TECHNOMANCIE';
 
-type Ctx = CanvasRenderingContext2D;
+type Ctx = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+/** A page canvas on the main thread, an offscreen one in the worker. */
+type Layer = HTMLCanvasElement | OffscreenCanvas;
 type Rand = () => number;
 type Point = [number, number];
 
@@ -37,11 +40,19 @@ function rng(seed: number): Rand {
 	};
 }
 
-/** A black square canvas whose coordinates run ±`extent` around its centre. */
-function makeLayer(size: number, extent: number): { canvas: HTMLCanvasElement; ctx: Ctx } | null {
+function blank(size: number): { canvas: Layer; ctx: Ctx | null } {
+	if (typeof document === 'undefined') {
+		const canvas = new OffscreenCanvas(size, size);
+		return { canvas, ctx: canvas.getContext('2d') };
+	}
 	const canvas = document.createElement('canvas');
 	canvas.width = canvas.height = size;
-	const ctx = canvas.getContext('2d');
+	return { canvas, ctx: canvas.getContext('2d') };
+}
+
+/** A black square canvas whose coordinates run ±`extent` around its centre. */
+function makeLayer(size: number, extent: number): { canvas: Layer; ctx: Ctx } | null {
+	const { canvas, ctx } = blank(size);
 	if (!ctx) return null;
 	ctx.fillStyle = '#000';
 	ctx.fillRect(0, 0, size, size);
@@ -211,7 +222,7 @@ function innerStar(ctx: Ctx, rand: Rand): void {
 }
 
 /** R = outer ring, G = toothed ring, B = inner star; each turns on its own. */
-export function drawSigil(size: number): HTMLCanvasElement | null {
+export function drawSigil(size: number): Layer | null {
 	const layer = makeLayer(size, RING_EXTENT);
 	if (!layer) return null;
 	const rand = rng(2027);
@@ -288,7 +299,7 @@ function walk(w: Walker, from: Point, startDir: number, steps: number, tStart: n
 }
 
 /** R = the line, G = the distance along it, B = the trace's seed (its pulse timing). */
-export function drawTraces(size: number): HTMLCanvasElement | null {
+export function drawTraces(size: number): Layer | null {
 	const layer = makeLayer(size, TRACE_EXTENT);
 	if (!layer) return null;
 	const rand = rng(1984);

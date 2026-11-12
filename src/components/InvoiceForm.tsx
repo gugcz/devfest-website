@@ -205,6 +205,17 @@ export default function InvoiceForm() {
 	// always holds the form.
 	const [open, setOpen] = useState(true);
 	useEffect(() => setOpen(invoicesOpen()), []);
+	// App Check (reCAPTCHA Enterprise) starts with the form, not on submit, so
+	// a token is ready by then; only the pages with a callable form load it,
+	// and this one only while the form is open (ADR 0014).
+	useEffect(() => {
+		if (!invoicesOpen()) return;
+		import('../lib/firebase')
+			.then(({ getFirebaseApp }) => getFirebaseApp())
+			.catch(() => {
+				// The submit imports it again and reports a failure there.
+			});
+	}, []);
 	// Shown errors, not computed ones: a field that has never been touched and
 	// has never been submitted is not "wrong yet", it is just empty.
 	const [errors, setErrors] = useState<Errors>({});
