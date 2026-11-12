@@ -23,3 +23,4 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0011](0011-root-for-the-next-edition-archives-under-the-year.md) | The root belongs to the next edition; past editions are frozen builds under `/<year>` | accepted; build storage superseded by 0013 |
 | [0012](0012-aftermovie-as-a-lazy-youtube-embed.md) | The aftermovie is a lazy YouTube embed, loaded regardless of consent | accepted |
 | [0013](0013-past-edition-builds-live-on-their-year-branch.md) | A past edition's build lives on its year branch; `main` pins it | accepted |
+| [0014](0014-app-check-only-where-a-callable-runs.md) | App Check starts only on a page with a callable form | accepted |

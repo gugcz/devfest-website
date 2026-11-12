@@ -172,7 +172,7 @@
 			},
 			{
 				"name": "rise",
-				"value": "1.4s ease-rise, delays 0 / 0.25s / 0.4s / 0.55s, translateY(14px) and fade",
+				"value": "1.4s ease-rise, delays 0 / 0.25s / 0.4s / 0.55s, translateY(14px), no fade (the stage is there from the first paint)",
 				"purpose": "The stage entering in order: logo, season, line, portal. Off under reduced motion."
 			},
 			{
@@ -187,8 +187,8 @@
 			},
 			{
 				"name": "aether-loop",
-				"value": "24 fps WebGL; resolution steps down by a fifth (to 40%) when 48 frames average under ~16 fps",
-				"purpose": "The painting. One still frame under prefers-reduced-motion; stops before a navigation swaps the page."
+				"value": "24 fps WebGL in a worker (OffscreenCanvas); resolution steps down by a fifth (to 40%) when 48 frames average under ~16 fps",
+				"purpose": "The painting. One still frame under prefers-reduced-motion; not started on a software rasterizer; stops before a navigation swaps the page."
 			}
 		],
 		"breakpoints": [

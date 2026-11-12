@@ -114,9 +114,10 @@ const SECTIONS = [
 
 						<h3>d) Bot protection (reCAPTCHA)</h3>
 						<p>
-							To protect our ticketing data from automated scraping and abuse, the site uses
-							Google reCAPTCHA Enterprise (via Firebase App Check). reCAPTCHA runs in the background to
-							tell humans from bots, analysing signals such as your interactions with the page,
+							To protect the forms that write data (the company invoice request and the workshop
+							sign-up) from automated abuse, the pages that carry them use Google reCAPTCHA
+							Enterprise (via Firebase App Check). It loads only on those pages, where it runs in the
+							background to tell humans from bots, analysing signals such as your interactions with the page,
 							device and browser information, and IP address. This data is shared with Google and
 							processed under the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
 							Because this is a security measure, it runs regardless of your cookie choice.
@@ -185,7 +186,7 @@ const SECTIONS = [
 								</tr>
 								<tr>
 									<th scope="row"><code>_GRECAPTCHA</code></th>
-									<td data-label="Purpose">Google reCAPTCHA — bot protection (set for security, not consent-gated)</td>
+									<td data-label="Purpose">Google reCAPTCHA — bot protection on the company invoice and workshop sign-up pages (set for security, not consent-gated)</td>
 									<td data-label="Duration">6 months</td>
 								</tr>
 								<tr>

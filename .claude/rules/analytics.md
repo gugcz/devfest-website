@@ -38,8 +38,8 @@ Rules (each verified in-browser):
 - `initAnalytics()` memoises the **in-flight promise**, not just the instance
   — callers overlap. The consent gate sits *before* the memo, so a page-load
   call while undecided doesn't pin "not booted" for the accept that follows.
-  App Check init sits before the gate (security, every environment,
-  regardless of consent).
+  Nothing else boots here: App Check is the callables' business, not the
+  page's (below).
 - The tag's own `config` page_view is off (`send_page_view: false`).
   `reportEntry()` sends the **entry page** captured at module load
   (`entryLocation`/`entryTitle`/`entryReferrer`, before `<ClientRouter />`
@@ -113,7 +113,11 @@ and `invoices`. Project `devfest-cz-app`,
 site `devfest-public`.
 
 **App Check** (reCAPTCHA Enterprise): committed public key `APPCHECK_SITE_KEY`
-(`PUBLIC_FIREBASE_APPCHECK_SITE_KEY` overrides). Inits on load everywhere,
-not gated on consent. Consumers: `submitInvoiceCallable` and
-`workshopRegistrationCallable`. Never enforce on
-`ticketsWebhook` (external HMAC caller) or schedulers.
+(`PUBLIC_FIREBASE_APPCHECK_SITE_KEY` overrides). Starts only through
+`getFirebaseApp()`, the callables' entry: `InvoiceForm` on mount, the
+workshop sign-in (`src/lib/workshops.ts`). Not gated on consent (security),
+and never on a page without a callable form: reCAPTCHA is a Google script,
+a frame and a third-party cookie (`_GRECAPTCHA`)
+([ADR 0014](../../docs/adr/0014-app-check-only-where-a-callable-runs.md)).
+Consumers: `submitInvoiceCallable` and `workshopRegistrationCallable`. Never
+enforce on `ticketsWebhook` (external HMAC caller) or schedulers.
