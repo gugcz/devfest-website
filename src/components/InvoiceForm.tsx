@@ -205,9 +205,11 @@ export default function InvoiceForm() {
 	// always holds the form.
 	const [open, setOpen] = useState(true);
 	useEffect(() => setOpen(invoicesOpen()), []);
-	// App Check (reCAPTCHA Enterprise) starts with the form, not on submit:
-	// a token is ready by then, and only this page loads it (ADR 0014).
+	// App Check (reCAPTCHA Enterprise) starts with the form, not on submit, so
+	// a token is ready by then; only the pages with a callable form load it,
+	// and this one only while the form is open (ADR 0014).
 	useEffect(() => {
+		if (!invoicesOpen()) return;
 		import('../lib/firebase')
 			.then(({ getFirebaseApp }) => getFirebaseApp())
 			.catch(() => {

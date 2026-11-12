@@ -57,10 +57,10 @@ export interface Init {
 export type Command =
 	| { type: 'layout'; layout: Layout }
 	| { type: 'pointer'; x: number; y: number }
-	| { type: 'view'; inView: boolean }
+	| { type: 'view'; inView: boolean; layout: Layout }
 	| { type: 'motion'; reduced: boolean };
 
-/** Why a painting did not start: no context at all, or one not worth running. */
+/** Why a painting did not start: no WebGL here, or none worth running (software, no GPU, a failed build). */
 export type Refusal = 'no-context' | 'unusable';
 
 export interface Painter {
@@ -123,11 +123,11 @@ function setUp(gl: WebGLRenderingContext, textureSize: number): Uniforms | null 
 }
 
 /**
- * `failIfMajorPerformanceCaveat` already refuses a fallback the browser
- * knows is slow; a rasterizer chosen outright (a headless browser, a
- * virtual machine) only names itself. Chrome and Safari mask `RENDERER` and
- * name it through the debug extension; Firefox names it in `RENDERER` and
- * warns on the extension, so it is asked only when masked.
+ * A rasterizer chosen outright (a headless browser, a virtual machine) only
+ * names itself; `failIfMajorPerformanceCaveat` catches the fallbacks the
+ * browser knows are slow. Chrome and Safari mask `RENDERER` and name it
+ * through the debug extension; Firefox names it in `RENDERER` and warns on
+ * the extension, so it is asked only when masked.
  */
 function rendersInSoftware(gl: WebGLRenderingContext): boolean {
 	let renderer = String(gl.getParameter(gl.RENDERER));
@@ -138,17 +138,26 @@ function rendersInSoftware(gl: WebGLRenderingContext): boolean {
 	return SOFTWARE.test(renderer);
 }
 
-function context(surface: Surface): WebGLRenderingContext | null {
-	const attributes: WebGLContextAttributes = {
-		alpha: false,
-		antialias: false,
-		depth: false,
-		stencil: false,
-		powerPreference: 'low-power',
-		failIfMajorPerformanceCaveat: true,
-	};
+const ATTRIBUTES: WebGLContextAttributes = {
+	alpha: false,
+	antialias: false,
+	depth: false,
+	stencil: false,
+	powerPreference: 'low-power',
+	failIfMajorPerformanceCaveat: true,
+};
+
+/**
+ * The context, or why there is none. No WebGL in this scope at all (a worker
+ * in Safari before 17) is `no-context`, worth a try on the main thread; a
+ * context refused here (no GPU, a blocklisted one, a major performance
+ * caveat) would be refused there too, so it is `unusable`.
+ */
+function context(surface: Surface): WebGLRenderingContext | Refusal {
 	// One call on either kind of canvas; their `getContext` overloads differ only in the 2D type.
-	return (surface as HTMLCanvasElement).getContext('webgl', attributes);
+	const gl = (surface as HTMLCanvasElement).getContext('webgl', ATTRIBUTES);
+	if (gl) return gl;
+	return typeof WebGLRenderingContext === 'undefined' ? 'no-context' : 'unusable';
 }
 
 /**
@@ -159,7 +168,7 @@ function context(surface: Surface): WebGLRenderingContext | null {
  */
 export function createPainter(surface: Surface, init: Init, onLost: () => void): Painter | Refusal {
 	const gl = context(surface);
-	if (!gl) return 'no-context';
+	if (typeof gl === 'string') return gl;
 	const u = rendersInSoftware(gl) ? null : setUp(gl, init.small ? 1024 : 2048);
 	if (!u) {
 		gl.getExtension('WEBGL_lose_context')?.loseContext();
@@ -167,14 +176,6 @@ export function createPainter(surface: Surface, init: Init, onLost: () => void):
 	}
 	return animate(surface, gl, u, init, onLost);
 }
-
-/** `requestAnimationFrame` where this thread has it (every main thread, most workers), else a timer at the frame rate. */
-const nextFrame = (callback: (now: number) => void): number =>
-	typeof requestAnimationFrame === 'function'
-		? requestAnimationFrame(callback)
-		: (setTimeout(() => callback(performance.now()), 1000 / FPS) as unknown as number);
-const cancelFrame = (id: number): void =>
-	typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(id) : clearTimeout(id);
 
 /** The render loop over a set-up context. */
 function animate(surface: Surface, gl: WebGLRenderingContext, u: Uniforms, init: Init, onLost: () => void): Painter {
@@ -197,7 +198,7 @@ function animate(surface: Surface, gl: WebGLRenderingContext, u: Uniforms, init:
 	function resize(): void {
 		const w = cssW();
 		const h = cssH();
-		const scale = Math.min(layout.dpr || 1, Math.sqrt(maxPixels / (w * h))) * quality;
+		const scale = Math.min(layout.dpr, Math.sqrt(maxPixels / (w * h))) * quality;
 		surface.width = Math.max(2, Math.round(w * scale));
 		surface.height = Math.max(2, Math.round(h * scale));
 		gl.viewport(0, 0, surface.width, surface.height);
@@ -244,7 +245,7 @@ function animate(surface: Surface, gl: WebGLRenderingContext, u: Uniforms, init:
 	}
 
 	function frame(now: number): void {
-		raf = nextFrame(frame);
+		raf = requestAnimationFrame(frame);
 		const dt = now - lastFrame;
 		if (dt < 1000 / FPS - 2) return;
 		lastFrame = now;
@@ -264,11 +265,11 @@ function animate(surface: Surface, gl: WebGLRenderingContext, u: Uniforms, init:
 	// The painting only moves while its anchor (the logo, a page title) is on
 	// screen; scrolled under the veil it holds its last frame and its clock.
 	function run(): void {
-		cancelFrame(raf);
+		cancelAnimationFrame(raf);
 		if (lost) return;
 		resize();
 		if (reduced) still();
-		else if (inView) raf = nextFrame(frame);
+		else if (inView) raf = requestAnimationFrame(frame);
 	}
 
 	// A lost context stays lost: the canvas fades out and the CSS gradient
@@ -276,7 +277,7 @@ function animate(surface: Surface, gl: WebGLRenderingContext, u: Uniforms, init:
 	const onContextLost = (e: Event): void => {
 		e.preventDefault();
 		lost = true;
-		cancelFrame(raf);
+		cancelAnimationFrame(raf);
 		onLost();
 	};
 	surface.addEventListener('webglcontextlost', onContextLost);
@@ -298,13 +299,13 @@ function animate(surface: Surface, gl: WebGLRenderingContext, u: Uniforms, init:
 				// scrolled past the anchor there is no next tick at all.
 				render(shown);
 			} else {
-				if (command.type === 'view') inView = command.inView;
+				if (command.type === 'view') ({ inView, layout } = command);
 				else reduced = command.reduced;
 				run();
 			}
 		},
 		stop() {
-			cancelFrame(raf);
+			cancelAnimationFrame(raf);
 			surface.removeEventListener('webglcontextlost', onContextLost);
 			gl.getExtension('WEBGL_lose_context')?.loseContext();
 		},

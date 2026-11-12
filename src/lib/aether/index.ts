@@ -14,7 +14,7 @@
  * animates. It runs at 24 frames a second, drops resolution on a slow GPU
  * and stops (freeing the GPU) when the page is left.
  */
-import type { Command, Init, Layout } from './painter';
+import type { Command, Init, Layout, Refusal } from './painter';
 import type { Report, Start } from './worker';
 
 /**
@@ -56,33 +56,42 @@ interface Link {
 }
 
 /**
- * Paints on the main thread; `null` when it does not start. Only a browser
- * that cannot hand the canvas to a worker loads the painting here.
+ * Paints on the main thread; `null` when it does not start or the page was
+ * left while the painting loaded. Only a browser that cannot hand the canvas
+ * to a worker loads it here. `init` is read once loaded, so it carries what
+ * the page saw meanwhile (the anchor scrolled away, a new size).
  */
-async function onMainThread(canvas: HTMLCanvasElement, init: Init): Promise<Link | null> {
+async function onMainThread(canvas: HTMLCanvasElement, init: () => Init, stopped: () => boolean): Promise<Link | null> {
 	const { createPainter } = await import('./painter');
-	const painter = createPainter(canvas, init, () => canvas.classList.remove('is-live'));
+	if (stopped()) return null;
+	const painter = createPainter(canvas, init(), () => canvas.classList.remove('is-live'));
 	if (typeof painter === 'string') return null;
 	canvas.classList.add('is-live');
 	return { send: (command) => painter.apply(command), stop: () => painter.stop() };
 }
 
 /**
- * Hands `canvas` to a worker. `onNoContext` runs when the worker has no
- * WebGL (Safari before 17 has `OffscreenCanvas` without it); the canvas is
- * the worker's for good by then, so the caller paints on a fresh one.
+ * Hands `canvas` to a worker; `null` when it was handed over already.
+ * `onRefusal` runs when the worker will not paint; after `no-context` (no
+ * WebGL in a worker: Safari before 17 has `OffscreenCanvas` without it) the
+ * canvas is the worker's for good, so the caller paints on a fresh one.
  */
-function inWorker(canvas: HTMLCanvasElement, init: Init, onNoContext: () => void): Link {
+function inWorker(canvas: HTMLCanvasElement, init: Init, onRefusal: (refusal: Refusal) => void): Link | null {
+	let offscreen: OffscreenCanvas;
+	try {
+		offscreen = canvas.transferControlToOffscreen();
+	} catch {
+		return null;
+	}
 	const worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
 	worker.onmessage = ({ data }: MessageEvent<Report>) => {
 		if (data === 'live') canvas.classList.add('is-live');
 		else if (data === 'lost') canvas.classList.remove('is-live');
 		else {
 			worker.terminate();
-			if (data === 'no-context') onNoContext();
+			onRefusal(data);
 		}
 	};
-	const offscreen = canvas.transferControlToOffscreen();
 	const start: Start = { type: 'start', canvas: offscreen, init };
 	worker.postMessage(start, [offscreen]);
 	return {
@@ -110,18 +119,13 @@ export function startAether(canvas: HTMLCanvasElement, anchor: HTMLElement): () 
 	let link: Link | null = null;
 	let stopped = false;
 	const send = (command: Command): void => link?.send(command);
-	const paintOnMainThread = (): void => {
-		void onMainThread(surface, init()).then((made) => {
-			if (stopped) made?.stop();
-			else link = made;
-		});
-	};
 
 	// The painting only moves while its anchor (the logo, a page title) is on
 	// screen; scrolled under the veil it holds its last frame and its clock.
+	// Measured again each time: the stage can settle after its islands load.
 	const watch = new IntersectionObserver(([entry]) => {
 		inView = entry?.isIntersecting ?? true;
-		send({ type: 'view', inView });
+		send({ type: 'view', inView, layout: measure(surface, anchor) });
 	});
 	// A new canvas size clears it to black; the painting repaints its held
 	// frame. The first callback, on the next frame, sends the size it starts at.
@@ -131,7 +135,36 @@ export function startAether(canvas: HTMLCanvasElement, anchor: HTMLElement): () 
 	};
 	const onMotionChange = (): void => send({ type: 'motion', reduced: reduced.matches });
 
-	const paintHere = (): void => {
+	// Stopped, or refused: nothing is left listening.
+	const stop = (): void => {
+		stopped = true;
+		watch.disconnect();
+		sized.disconnect();
+		window.removeEventListener('pointermove', onPointer);
+		reduced.removeEventListener('change', onMotionChange);
+		link?.stop();
+		link = null;
+	};
+
+	const paintOnMainThread = (): void => {
+		onMainThread(surface, init, () => stopped)
+			.then((made) => {
+				if (stopped) made?.stop();
+				else if (made) link = made;
+				else stop();
+			})
+			.catch((err: unknown) => {
+				console.warn('[aether] painting failed:', err);
+				stop();
+			});
+	};
+
+	const onRefusal = (refusal: Refusal): void => {
+		if (stopped) return;
+		if (refusal === 'unusable') {
+			stop();
+			return;
+		}
 		// A canvas handed to a worker cannot be drawn on here; take a fresh one.
 		const fresh = surface.cloneNode() as HTMLCanvasElement;
 		surface.replaceWith(fresh);
@@ -141,21 +174,16 @@ export function startAether(canvas: HTMLCanvasElement, anchor: HTMLElement): () 
 		paintOnMainThread();
 	};
 
-	if ('transferControlToOffscreen' in canvas && typeof Worker === 'function') link = inWorker(canvas, init(), paintHere);
-	else paintOnMainThread();
+	if ('transferControlToOffscreen' in canvas && typeof Worker === 'function') {
+		link = inWorker(canvas, init(), onRefusal);
+		if (!link) return () => {};
+	} else {
+		paintOnMainThread();
+	}
 
 	watch.observe(anchor);
 	sized.observe(surface);
 	window.addEventListener('pointermove', onPointer, { passive: true });
 	reduced.addEventListener('change', onMotionChange);
-
-	return () => {
-		stopped = true;
-		watch.disconnect();
-		sized.disconnect();
-		window.removeEventListener('pointermove', onPointer);
-		reduced.removeEventListener('change', onMotionChange);
-		link?.stop();
-		link = null;
-	};
+	return stop;
 }

@@ -35,9 +35,13 @@ third-party cookies"), and a failed load as a console error.
 
 ## Consequences
 
-- Pages without a form send nothing to Google before consent, and nothing
-  but the YouTube player ([0012](0012-aftermovie-as-a-lazy-youtube-embed.md))
-  after it unless the visitor accepts analytics.
+- A page without a form sends Google nothing unless the visitor accepts
+  analytics; the one exception is the home page's YouTube player
+  ([0012](0012-aftermovie-as-a-lazy-youtube-embed.md)), which loads on scroll
+  whatever the choice.
+- Once started, App Check keeps refreshing its token for the rest of the
+  visit, soft navigations included, until a full page load.
+- The invoice form starts it only while requests are open.
 - reCAPTCHA sees the visitor only on the form's page, so its score rests on
   the time spent there. The callables keep their throttles
   ([0004](0004-app-check-with-plain-tokens.md)) whatever the score.

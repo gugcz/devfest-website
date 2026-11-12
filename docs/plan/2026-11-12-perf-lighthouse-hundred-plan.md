@@ -37,14 +37,16 @@ long as the page is open.
 - `index.ts`: stays on the page, measures, observes (intersection, resize,
   pointer, reduced motion) and sends commands. Without
   `transferControlToOffscreen` it paints on the main thread (painter loaded
-  on demand); a worker without WebGL (Safari 16) hands back and the page
-  paints on a fresh canvas.
+  on demand, its settings read once loaded); a worker without WebGL at all
+  (Safari 16) hands back and the page paints on a fresh canvas.
 - No painting on a software rasterizer (`failIfMajorPerformanceCaveat`, and
   the renderer's name: SwiftShader, llvmpipe, WARP): the root's gradients
-  stay, as without WebGL.
+  stay, as without WebGL, and nothing is left listening. A context refused
+  in the worker is not retried on the main thread.
 - Check: TBT 0 with the painting running (the software check bypassed);
   the three paths (worker, main thread, worker without WebGL) each paint;
-  soft navigations start a worker per page and end the last.
+  soft navigations start a worker per page and end the last; a repeated
+  `astro:page-load` leaves the running canvas alone.
 
 ## 2. The stage is there from the first paint
 

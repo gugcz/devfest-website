@@ -51,8 +51,9 @@ const PRIORITY: Record<string, number> = {
 
 // Accessibility-audit mock mode. Page data comes from `/api/*`, served from
 // fixtures by scripts/a11y.mjs. The one Firebase module still on the path is
-// App Check (inits on every load); under A11Y_MOCK=1 `firebase/app-check` is
-// aliased to a no-op so headless CI doesn't load reCAPTCHA.
+// App Check (starts on the callable-form pages, `/invoice` and `/workshops`);
+// under A11Y_MOCK=1 `firebase/app-check` is aliased to a no-op so headless CI
+// doesn't load reCAPTCHA.
 const a11yMock = process.env.A11Y_MOCK === '1';
 const mock = (rel: string): string => fileURLToPath(new URL(rel, import.meta.url));
 const a11yMockAlias: Record<string, string> = a11yMock
