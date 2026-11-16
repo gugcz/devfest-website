@@ -27,7 +27,8 @@ ended moves to `devfest.cz/<year>` as a frozen build
    `PUBLIC_FEATURES_ON=tickets npm run archive -- 2027`). Never edit it by
    hand. Its aftermovie, once out, goes into `AFTERMOVIES` in
    `src/lib/editions.ts` (the YouTube video id); the home page plays it
-   under the edition's figures.
+   under the edition's figures. Its shared photo album goes into `ALBUMS`
+   next to it; the home page links to it under the prints.
 2. **Publish it** ([ADR 0013](adr/0013-past-edition-builds-live-on-their-year-branch.md)):
    the build is committed on the edition's year branch (cut as in "The
    production branch" below), never on `main` (`archive/` is ignored

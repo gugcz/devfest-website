@@ -5,6 +5,7 @@ import EndLine from '../components/EndLine.astro';
 import { loadMediaCoverage } from '../lib/press-coverage';
 import { listPressKit } from '../lib/press-kit';
 import { EVENT } from '../lib/event';
+import { lastEdition } from '../lib/editions';
 import config from '../site.config';
 import { enabled, enabledOnly, type FeatureFlag } from '../lib/flags';
 
@@ -13,6 +14,8 @@ import { enabled, enabledOnly, type FeatureFlag } from '../lib/flags';
 // `press` flag is on. The full kit page stays at `/press/downloads`.
 const press = enabled('press');
 const mediaCoverage = press ? await loadMediaCoverage() : [];
+// The press print is a frame from the last edition's gallery (`public/gallery/`).
+const last = lastEdition();
 
 // The inboxes, one plate each; the general one first.
 type Desk = { id: string; title: string; desc: string; email: string; name?: string; role?: string; feature?: FeatureFlag };
@@ -131,10 +134,10 @@ const inboxes = INBOXES[desks.length] ?? `${desks.length + 1} inboxes`;
 
 					<figure class="paper press-print" aria-hidden="true">
 						<div class="paper-photo">
-							<img src="/gallery/devfest-2025-07.webp" alt="" loading="lazy" decoding="async" />
+							<img src="/gallery/devfest-2026-03.webp" alt="" loading="lazy" decoding="async" />
 						</div>
-						<figcaption class="paper-edge"><span>2019</span></figcaption>
-						<span class="tape press-print-tape">DevFest.cz 2019</span>
+						{last && <figcaption class="paper-edge"><span>{last.year}</span></figcaption>}
+						{last && <span class="tape press-print-tape">{last.name}</span>}
 					</figure>
 				</div>
 			</div>

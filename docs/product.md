@@ -82,8 +82,9 @@ edition is not announced; copy never says "one day".
   tickets, and a framed portal to `/2026`), then on the veil: what
   DevFest.cz is and what is announced (when, where, language), the sections
   the flags have on (tickets, speakers, partners), 2026 in figures (from the
-  archive's facts and frozen lineup) with prints from past editions and
-  the 2026 aftermovie (a lazy YouTube embed in privacy-enhanced mode,
+  archive's facts and frozen lineup) with prints from the 2026 edition, a
+  link out to its full photo album (Google Photos, a plain link, nothing
+  embedded) and the 2026 aftermovie (a lazy YouTube embed in privacy-enhanced mode,
   loaded regardless of the cookie choice; privacy policy §2f, ADR 0012), the
   app (flag `app`), the newsletter. JSON-LD is `Organization` and `WebSite`, plus `Event`
   once the day is set.
@@ -150,8 +151,10 @@ edition is not announced; copy never says "one day".
   on the `2026` branch (and locally after a build).
 - Aftermovies by year: `AFTERMOVIES` in `src/lib/editions.ts` (YouTube
   video ids; 2026 has one).
+- Photo albums by year: `ALBUMS` in `src/lib/editions.ts` (shared Google
+  Photos links; 2026 has one).
 - **Absent:** testimonials, attendance figures beyond what page copy states,
-  pricing outside ti.to, photographs of 2026, and for 2027
+  pricing outside ti.to, and for 2027
   anything beyond "Fall 2027, Prague" (date, venue, prices, call for
   speakers). Do not fabricate any of these.
 
