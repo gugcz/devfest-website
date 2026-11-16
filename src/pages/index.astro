@@ -68,12 +68,12 @@ const homeRows: HomeRow[] = [
 // The prices as of the build, for readers that run no script.
 const ticketLines = enabled('tickets') ? await staticTicketLines() : [];
 
-// Frames from past editions' contact sheets (`public/gallery/`).
+// Frames from the 2026 contact sheet (`public/gallery/`).
 const PRINTS = [
-	{ n: '01', alt: 'A full hall facing the stage at a past DevFest.cz' },
-	{ n: '03', alt: 'A speaker in an orange T-shirt raises a hand on stage' },
-	{ n: '08', alt: 'The audience laughing during a talk' },
-	{ n: '20', alt: 'Attendees laughing over their laptops at a long table' },
+	{ n: '02', alt: 'A full hall facing the stage as the organizers introduce the team' },
+	{ n: '01', alt: 'A speaker in a Google Cloud T-shirt leans on the lectern and smiles' },
+	{ n: '06', alt: 'The audience following a talk between the brick walls of the hall' },
+	{ n: '04', alt: 'Three attendees lean in over a phone under violet light' },
 ] as const;
 ---
 
@@ -153,10 +153,10 @@ const PRINTS = [
 								<dd>{last.speakers}</dd>
 							</div>
 						</dl>
-						<ul class="prints" role="list" aria-label="Photographs from past editions">
+						<ul class="prints" role="list" aria-label="Photographs from the 2026 edition">
 							{PRINTS.map(({ n, alt }) => (
 								<li class="print">
-									<img src={`/gallery/devfest-2025-${n}.webp`} {alt} loading="lazy" decoding="async" width="1080" height="720" />
+									<img src={`/gallery/devfest-2026-${n}.webp`} {alt} loading="lazy" decoding="async" width="1080" height="720" />
 								</li>
 							))}
 						</ul>
