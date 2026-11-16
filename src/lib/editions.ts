@@ -21,9 +21,6 @@ const ON_SUBDOMAINS: readonly number[] = [2025, 2019, 2018, 2017];
 /** Each edition's aftermovie: its YouTube video id, by year. */
 const AFTERMOVIES: Readonly<Record<number, string>> = { 2026: 'vQGgPPCq1Eg' };
 
-/** Each edition's photo album: the organizer's shared Google Photos link, by year. */
-const ALBUMS: Readonly<Record<number, string>> = { 2026: 'https://photos.app.goo.gl/ehQofpfSw4nKUg28A' };
-
 export interface PastEdition {
 	year: number;
 	href: string;
@@ -79,8 +76,6 @@ export interface LastEdition extends EditionFacts {
 	talks: number;
 	/** The YouTube video id of its aftermovie, `null` until there is one. */
 	aftermovie: string | null;
-	/** The shared link to its photo album, `null` until there is one. */
-	album: string | null;
 }
 
 /**
@@ -110,13 +105,7 @@ export function lastEdition(): LastEdition | null {
 	const file = join(ARCHIVE_ROOT, year, 'edition.json');
 	if (!existsSync(file)) return null;
 	const facts = JSON.parse(readFileSync(file, 'utf8')) as EditionFacts;
-	return {
-		...facts,
-		href: `/${year}`,
-		...onStage(year),
-		aftermovie: AFTERMOVIES[facts.year] ?? null,
-		album: ALBUMS[facts.year] ?? null,
-	};
+	return { ...facts, href: `/${year}`, ...onStage(year), aftermovie: AFTERMOVIES[facts.year] ?? null };
 }
 
 /**
