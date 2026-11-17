@@ -145,6 +145,7 @@ export function initAnalytics(): Promise<void> {
 			analyticsInstance = initializeAnalytics(getApp(), { config: { send_page_view: false } });
 			reportEntry();
 			schedulePerformance();
+			scheduleCrashlytics();
 		} catch (err) {
 			console.warn('[firebase] Analytics init failed:', err);
 		}
@@ -174,6 +175,35 @@ function schedulePerformance(): void {
 			console.warn('[firebase] Performance init failed:', err);
 		}
 	};
+	whenIdle(boot);
+}
+
+let crashlyticsStarted = false;
+/**
+ * Boot Firebase Crashlytics (a preview SDK): uncaught errors and unhandled
+ * promise rejections, reported with the stack. Same gates as GA4, because it
+ * stores a Firebase Installations id and a session id on the device. Its own
+ * lazy chunk, loaded when the browser is idle: the SDK brings OpenTelemetry
+ * with it. An error thrown before the boot is not reported. No breadcrumbs,
+ * so no navigation, request or interaction trail leaves the page.
+ */
+function scheduleCrashlytics(): void {
+	// Same rule as Performance: nothing reports from the sign-in link page.
+	if (crashlyticsStarted || isAppLinkPath(window.location.pathname)) return;
+	crashlyticsStarted = true;
+	whenIdle(async () => {
+		try {
+			const { getCrashlytics } = await import('firebase/crashlytics');
+			getCrashlytics(getApp());
+		} catch (err) {
+			console.warn('[firebase] Crashlytics init failed:', err);
+		}
+	});
+}
+
+/** Run `boot` once the browser is idle, so an SDK chunk never competes with
+ * the page. */
+function whenIdle(boot: () => Promise<void>): void {
 	if ('requestIdleCallback' in window) {
 		requestIdleCallback(() => void boot(), { timeout: 5000 });
 	} else {
@@ -182,7 +212,8 @@ function schedulePerformance(): void {
 }
 
 /** `/login/<code>`: the app's sign-in link. The code in the path is a
- * credential, so it never reaches GA4 or Performance Monitoring. */
+ * credential, so it never reaches GA4, Performance Monitoring or
+ * Crashlytics. */
 function isAppLinkPath(pathname: string): boolean {
 	return /^\/login(?:\/|$)/.test(pathname);
 }

@@ -129,8 +129,8 @@ document.addEventListener('keydown', (e) => {
 
 // "Cookie settings" (footer, privacy policy) forgets the decision and asks
 // again (GDPR Art. 7(3): withdrawing is as easy as giving). After an accept
-// GA4 and Performance Monitoring are loaded in this document and cannot be
-// unloaded, so their cookies and storage are deleted and the page reloads
+// GA4, Performance Monitoring and Crashlytics are loaded in this document and
+// cannot be unloaded, so their cookies and storage are deleted and the page reloads
 // clean; nothing runs while the visitor decides again. Delegated, because
 // <ClientRouter /> swaps the buttons on every navigation.
 document.addEventListener('click', async (e) => {

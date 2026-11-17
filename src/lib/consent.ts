@@ -45,8 +45,9 @@ export function cookieDomains(hostname: string): string[] {
 	return labels.slice(0, -1).map((_, i) => labels.slice(i).join('.'));
 }
 
-/** Delete what an accept left behind: the `_ga` cookies, Performance
- * Monitoring's installation id (IndexedDB) and its cached remote config.
+/** Delete what an accept left behind: the `_ga` cookies, the installation id
+ * Performance Monitoring and Crashlytics share (IndexedDB), Performance's
+ * cached remote config and Crashlytics' session id.
  * Never throws. The SDKs already in memory stay loaded (and can write again
  * or hold the database open), so the caller reloads and runs this once more
  * on the fresh page, where nothing has booted. */
@@ -64,6 +65,11 @@ export async function deleteAnalyticsData(): Promise<void> {
 	try {
 		localStorage.removeItem('@firebase/performance/config');
 		localStorage.removeItem('@firebase/performance/configexpire');
+	} catch {
+		/* storage unavailable — nothing was stored */
+	}
+	try {
+		sessionStorage.removeItem('firebasecrashlytics.sessionid');
 	} catch {
 		/* storage unavailable — nothing was stored */
 	}

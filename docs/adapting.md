@@ -160,7 +160,7 @@ Everything above, plus:
    (`hosting.site`, the rewrite regions), the Storage `speakers/` rules,
    the Firestore and RTDB rules (this repo's live in the mobile app's repo,
    [ADR 0009](adr/0009-database-rules-live-in-the-app-repo.md)), App Check,
-   GA4 and Performance Monitoring in the console (`README.md`). The
+   GA4, Performance Monitoring and Crashlytics in the console (`README.md`). The
    workflows name the project in three `--project` arguments
    (`firebase-hosting-merge.yml`, `firebase-hosting-pull-request.yml`,
    `firebase-functions-merge.yml`) and the `FIREBASE_SERVICE_ACCOUNT_*`

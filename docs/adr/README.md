@@ -24,3 +24,4 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0012](0012-aftermovie-as-a-lazy-youtube-embed.md) | The aftermovie is a lazy YouTube embed, loaded regardless of consent | accepted |
 | [0013](0013-past-edition-builds-live-on-their-year-branch.md) | A past edition's build lives on its year branch; `main` pins it | accepted |
 | [0014](0014-app-check-only-where-a-callable-runs.md) | App Check starts only on a page with a callable form | accepted |
+| [0015](0015-crashlytics-behind-the-consent-gate.md) | Crashlytics reports browser errors only after consent | accepted |
