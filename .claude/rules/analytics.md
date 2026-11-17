@@ -58,9 +58,10 @@ banner, focused. After an `accepted` the SDKs are already in the document and
 cannot be unloaded, so instead it `deleteAnalyticsData()`s (`consent.ts`:
 `_ga*` cookies on the host and each parent domain, the
 `firebase-installations-database` IndexedDB, Performance's cached config in
-localStorage) and reloads. A one-shot `sessionStorage` flag makes the fresh
-page delete once more (the old page's tag can write a cookie on `pagehide`,
-and its open connection blocks the IndexedDB delete) and focus the banner.
+localStorage, Crashlytics' session id in sessionStorage) and reloads. A
+one-shot `sessionStorage` flag makes the fresh page delete once more (the
+old page's tag can write a cookie on `pagehide`, and its open connection
+blocks the IndexedDB delete) and focus the banner.
 Nothing runs while the visitor decides again. A
 new store set after consent is added to `deleteAnalyticsData()` and to the
 privacy policy's table.
@@ -80,17 +81,32 @@ chunk loaded on `requestIdleCallback` (5s timeout; `setTimeout` fallback).
 A late boot still reports the entry page load and Web Vitals: the SDK reads
 the buffered Performance API. Console: Firebase → Performance.
 
+**Crashlytics** (`firebase/crashlytics`, a preview SDK): booted by
+`scheduleCrashlytics()` next to Performance, so it shares both gates. It
+stores the same Installations id and a session id in sessionStorage
+(`firebasecrashlytics.sessionid`), and sends both with every report
+([ADR 0015](../../docs/adr/0015-crashlytics-behind-the-consent-gate.md)).
+`getCrashlytics()` registers the `error` and `unhandledrejection` listeners
+itself; nothing calls `recordError()`. It also sends one "Session created"
+record per tab at boot, with no error, and flushes on `pagehide`. A separate dynamic chunk on idle (the
+SDK brings OpenTelemetry), so an error thrown before the boot, or for a
+visitor who has not accepted, is never reported. No `breadcrumbs()`: that
+feature sends navigation, request and interaction trails. Never boots on
+`/login/<code>`. No source maps are uploaded yet, so stacks are minified.
+Console: Firebase → Crashlytics, after the project Owner has run
+`firebase crashlytics:setup`.
+
 **Page views under `<ClientRouter />`:** GA4 sees only what we send, never
 `pushState`. `trackPageView()` runs on every `astro:page-load`: a no-op until
 accepted and for the page the boot has just reported, otherwise a `page_view`
 with explicit `page_location`/`page_title`/`page_referrer`.
 
-**Sign-in link URLs never reach GA4 or Performance:** `/login/<code>`
+**Sign-in link URLs never reach GA4, Performance or Crashlytics:** `/login/<code>`
 carries a credential in the path. `sendPageView()` cuts it to `/login/`
 (query and hash dropped) in `page_location` and `page_referrer`, and
 `gtag('set')`s that URL for the page's later events. Performance Monitoring
 reports `location.href` with no hook to rewrite it, so `schedulePerformance()`
-never boots on that path.
+never boots on that path; `scheduleCrashlytics()` follows the same rule.
 
 **Conversion events**, all via `src/lib/analytics.ts`:
 

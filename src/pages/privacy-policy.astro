@@ -101,7 +101,15 @@ const SECTIONS = [
 							you type.
 						</p>
 						<p>
-							The data is used only for analytics — never for advertising,
+							With the same consent we also run Google Firebase Crashlytics, which reports
+							errors the site's code runs into in your browser: the error message and where in
+							our code it happened, together with the random installation id above. It also
+							keeps a random session id in your browser (sessionStorage, listed
+							below) until you close the tab, and sends one record when that session starts,
+							even when no error happens.
+						</p>
+						<p>
+							The data is used only for analytics and for fixing errors — never for advertising,
 							ad personalisation, or profiling.
 						</p>
 
@@ -182,8 +190,13 @@ const SECTIONS = [
 								</tr>
 								<tr>
 									<th scope="row"><code>firebase-installations-database</code></th>
-									<td data-label="Purpose">Firebase Performance Monitoring installation id (IndexedDB) — only set after consent</td>
+									<td data-label="Purpose">Firebase Performance Monitoring and Crashlytics installation id (IndexedDB) — only set after consent</td>
 									<td data-label="Duration">Until you clear browser storage</td>
+								</tr>
+								<tr>
+									<th scope="row"><code>firebasecrashlytics.sessionid</code></th>
+									<td data-label="Purpose">Firebase Crashlytics session id (sessionStorage) — only set after consent</td>
+									<td data-label="Duration">Until you close the tab</td>
 								</tr>
 								<tr>
 									<th scope="row"><code>_GRECAPTCHA</code></th>
@@ -208,7 +221,7 @@ const SECTIONS = [
 						</p>
 						<ul>
 							<li>SmartEmailing — newsletter delivery</li>
-							<li>Google Firebase (Hosting, Analytics, Performance Monitoring, Firestore) — website hosting, analytics, performance measurement, and storage of invoice requests</li>
+							<li>Google Firebase (Hosting, Analytics, Performance Monitoring, Crashlytics, Firestore) — website hosting, analytics, performance measurement, error reporting, and storage of invoice requests</li>
 							<li>Google reCAPTCHA Enterprise (via Firebase App Check) — bot protection</li>
 							<li>Google YouTube (embedded player, privacy-enhanced mode) — the aftermovie on the home page</li>
 							<li>iDoklad (Solitea a.s. / Seyfor, <a href="https://www.idoklad.cz" target="_blank" rel="noopener noreferrer">idoklad.cz</a>) — issuing company invoices</li>

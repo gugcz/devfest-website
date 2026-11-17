@@ -186,7 +186,7 @@ one directly when working outside them.
 | `sessionize.md` | `functions/src/sessionize/**`, `functions/src/lineup/**`, the lineup helpers, share pages | Lineup sync, delete-guard, photo mirror, share pages |
 | `invoices.md` | `functions/src/invoice/**`, `InvoiceForm.tsx`, `invoice.astro` | iDoklad OAuth/API, invoice flow, discount code, emails |
 | `workshops.md` | `functions/src/workshops/**`, `src/lib/workshops.ts`, `Workshops.tsx`, `workshops.astro` | Seat limits, waitlist order, the app's ticket login |
-| `analytics.md` | `src/lib/firebase.ts`, `analytics.ts`, `consent.ts`, `CookieBanner.astro`, the thank-you pages | GA4 Consent Mode, page views, conversion events, Performance Monitoring |
+| `analytics.md` | `src/lib/firebase.ts`, `analytics.ts`, `consent.ts`, `CookieBanner.astro`, the thank-you pages | GA4 Consent Mode, page views, conversion events, Performance Monitoring, Crashlytics |
 | `invite.md` | `src/routes/invite/**`, `src/routes/og/invite/**`, `src/lib/invite.ts`, `InviteCta.tsx`, `team.json` | `/invite/<member>` pages, CTA, visual direction |
 | `design.md` | `docs/design.md`, `docs/design-2026.md`, `docs/product.md`, `.impeccable/**`, `src/components/**`, `src/pages/**`, `src/routes/**`, `src/layouts/**`, `src/styles/**` | Impeccable loop, which design record binds which page |
 | `docs.md` | `docs/**`, `README.md`, `CLAUDE.md`, `.claude/**`, the PR template | README, CLAUDE.md, ADRs, brainstorms, plans, what goes where |
