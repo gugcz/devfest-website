@@ -106,7 +106,8 @@ edited PR body keeps its old text in the public edit history.
 - `scripts/`: the axe sweep (`a11y.mjs`), its `/api/*` fixtures
   (`a11y-mocks/`), the anchor-scroll measure (`anchor-measure.mjs`,
   `npm run anchors`) and the archiver (`archive.mjs`).
-- `public/`: static assets, the press kit, `.well-known/` (iOS app links).
+- `public/`: static assets, the press kit, `.well-known/` (iOS app links),
+  `email/` (images that sent emails link to; never rename or delete one).
 - `docs/design.md`: the design system (the aether), binding for the live
   site; `docs/design-2026.md`: the 2026 noir system, binding for the
   archive and the flagged surfaces not yet reskinned; `docs/product.md`:
