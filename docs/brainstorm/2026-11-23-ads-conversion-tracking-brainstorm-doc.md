@@ -1,7 +1,7 @@
 ---
 date: 2026-11-23
 topic: ads-conversion-tracking
-status: variant not chosen yet
+status: variant B chosen (2026-11-24)
 ---
 
 # Ad conversion tracking: GTM, Meta Pixel, LinkedIn Insight Tag
@@ -213,7 +213,7 @@ B first, C later only if value or match rate proves to be the gap.
 
 ## Key Decisions
 
-- Recommend B, with C as a later add-on: see "Why This Approach".
+- Variant B chosen by the maintainer (2026-11-24). C stays a possible later add-on: see "Why This Approach".
 - A separate "marketing" consent, never bundled with analytics:
   GDPR needs a granular, specific choice.
 - Nothing loads before that consent, same rule as ADR 0007.
@@ -225,7 +225,6 @@ B first, C later only if value or match rate proves to be the gap.
 
 ## Open Questions
 
-- Which variant? (maintainer)
 - Who runs the campaigns, and how often do they need new events?
   A weekly need tips the scale towards A2.
 - Consent shape: one "marketing" toggle, or Meta and LinkedIn separately?
