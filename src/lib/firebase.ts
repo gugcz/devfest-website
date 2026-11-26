@@ -184,7 +184,8 @@ let crashlyticsStarted = false;
  * promise rejections, reported with the stack. Same gates as GA4, because it
  * stores a Firebase Installations id and a session id on the device. Its own
  * lazy chunk, loaded when the browser is idle: the SDK brings OpenTelemetry
- * with it. An error thrown before the boot is not reported. No breadcrumbs,
+ * with it. An error thrown before the boot is not reported. A minified React
+ * error arrives with its message (`react-errors.ts`). No breadcrumbs,
  * so no navigation, request or interaction trail leaves the page.
  */
 function scheduleCrashlytics(): void {
@@ -193,8 +194,17 @@ function scheduleCrashlytics(): void {
 	crashlyticsStarted = true;
 	whenIdle(async () => {
 		try {
-			const { getCrashlytics } = await import('firebase/crashlytics');
-			getCrashlytics(getApp());
+			const [{ getCrashlytics, recordError }, { readableError }] = await Promise.all([
+				import('firebase/crashlytics'),
+				import('./react-errors'),
+			]);
+			// The SDK's own listeners send React's minified messages as they
+			// are; these send the same events with the message decoded.
+			const crashlytics = getCrashlytics(getApp(), { captureUnhandledErrors: false });
+			window.addEventListener('error', (event) => recordError(crashlytics, readableError(event.error)));
+			window.addEventListener('unhandledrejection', (event) =>
+				recordError(crashlytics, readableError(event.reason)),
+			);
 		} catch (err) {
 			console.warn('[firebase] Crashlytics init failed:', err);
 		}
