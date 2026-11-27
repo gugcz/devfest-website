@@ -98,8 +98,11 @@ the buffered Performance API. Console: Firebase → Performance.
 stores the same Installations id and a session id in sessionStorage
 (`firebasecrashlytics.sessionid`), and sends both with every report
 ([ADR 0015](../../docs/adr/0015-crashlytics-behind-the-consent-gate.md)).
-`getCrashlytics()` registers the `error` and `unhandledrejection` listeners
-itself; nothing calls `recordError()`. It also sends one "Session created"
+`getCrashlytics()` boots with `captureUnhandledErrors: false`; our own
+`error` and `unhandledrejection` listeners call `recordError()` with
+`readableError()` (`src/lib/react-errors.ts`), which turns React's
+"Minified React error #N" back into its text (the hydration codes; any
+other keeps its number and link). Nothing else calls `recordError()`. It also sends one "Session created"
 record per tab at boot, with no error, and flushes on `pagehide`. A separate dynamic chunk on idle (the
 SDK brings OpenTelemetry), so an error thrown before the boot, or for a
 visitor who has not accepted, is never reported. No `breadcrumbs()`: that

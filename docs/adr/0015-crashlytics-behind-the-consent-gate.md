@@ -24,8 +24,12 @@ stored or sent before the visitor accepts.
   Monitoring: only after an accept, only on the production hosts.
 - It loads as its own chunk when the browser is idle. The SDK brings
   OpenTelemetry with it and must not compete with the page.
-- Only the SDK's own `error` and `unhandledrejection` listeners report
-  errors. The SDK also sends one "Session created" record per tab at boot,
+- Only uncaught errors and unhandled rejections are reported, through our
+  own `error` and `unhandledrejection` listeners in place of the SDK's
+  (`captureUnhandledErrors: false`). They pass each error through
+  `readableError()` (`src/lib/react-errors.ts`) first, because React's
+  production build reports "Minified React error #418" with no text.
+  Amended 2026-11-24. The SDK also sends one "Session created" record per tab at boot,
   with both ids, even when no error happens. The
   experimental `breadcrumbs()` feature stays off: it sends navigation,
   request and interaction trails.
