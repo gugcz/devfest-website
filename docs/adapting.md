@@ -165,6 +165,11 @@ Everything above, plus:
    (`firebase-hosting-merge.yml`, `firebase-hosting-pull-request.yml`,
    `firebase-functions-merge.yml`) and the `FIREBASE_SERVICE_ACCOUNT_*`
    secret.
+   Ad tags are optional: set the repository variables
+   `PUBLIC_META_PIXEL_ID`, `PUBLIC_LINKEDIN_PARTNER_ID` and
+   `PUBLIC_LINKEDIN_CONVERSION_IDS` to your own, or leave them unset and no
+   ad tag loads (ADR 0016). The host gate in `src/lib/tracking-gates.ts`
+   names this site's hosts.
 5. **The functions mirror**, `functions/src/site.ts`: every value, plus
    `FUNCTIONS_ONLY` (sender address and name, the e-mail's date and venue
    lines, the app's second Hosting origin).

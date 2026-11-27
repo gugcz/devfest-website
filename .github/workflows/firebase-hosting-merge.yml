@@ -35,6 +35,11 @@ jobs:
       - run: npm run build
         env:
           PUBLIC_INVITE_DISCOUNT_URL: ${{ secrets.PUBLIC_INVITE_DISCOUNT_URL }}
+          # Ad tag ids (repository variables, never in the repo). Unset → no
+          # ad tag; previews skip them, the host gate would block them anyway.
+          PUBLIC_META_PIXEL_ID: ${{ vars.PUBLIC_META_PIXEL_ID }}
+          PUBLIC_LINKEDIN_PARTNER_ID: ${{ vars.PUBLIC_LINKEDIN_PARTNER_ID }}
+          PUBLIC_LINKEDIN_CONVERSION_IDS: ${{ vars.PUBLIC_LINKEDIN_CONVERSION_IDS }}
       # Deploy with w9jds/firebase-action, which runs firebase-tools inside a
       # Node 21 container. This avoids the intermittent "Premature close"
       # keep-alive failure that breaks FirebaseExtended/action-hosting-deploy

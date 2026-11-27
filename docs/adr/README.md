@@ -16,7 +16,7 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0004](0004-app-check-with-plain-tokens.md) | Callables enforce App Check with plain tokens, plus throttles | accepted |
 | [0005](0005-workshop-sign-up-on-the-app-login.md) | Workshop sign-up reuses the mobile app's ticket login; seats live in RTDB | accepted |
 | [0006](0006-share-pages-built-from-the-live-lineup.md) | Talk and speaker share pages are built from the live lineup at build time | accepted |
-| [0007](0007-analytics-basic-consent-mode.md) | GA4 runs in basic Consent Mode: nothing loads before consent | accepted |
+| [0007](0007-analytics-basic-consent-mode.md) | GA4 runs in basic Consent Mode: nothing loads before consent | accepted; ad-tag lines superseded by 0016 |
 | [0008](0008-agent-readable-build-time-html.md) | Readers without script get the lineup, programme and prices as build-time HTML | accepted |
 | [0009](0009-database-rules-live-in-the-app-repo.md) | Firestore and RTDB rules live whole in the app repo and deploy from its CI | accepted |
 | [0010](0010-site-config-and-feature-flags.md) | Every edition fact lives in one typed site config; sections switch off by flag | accepted |
@@ -25,3 +25,4 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0013](0013-past-edition-builds-live-on-their-year-branch.md) | A past edition's build lives on its year branch; `main` pins it | accepted |
 | [0014](0014-app-check-only-where-a-callable-runs.md) | App Check starts only on a page with a callable form | accepted |
 | [0015](0015-crashlytics-behind-the-consent-gate.md) | Crashlytics reports browser errors only after consent | accepted |
+| [0016](0016-ad-tags-behind-a-marketing-consent.md) | Meta Pixel and LinkedIn Insight Tag run behind a marketing consent | accepted |

@@ -1,6 +1,6 @@
 # 0007. GA4 runs in basic Consent Mode
 
-- Status: accepted
+- Status: accepted; "never for advertising" and "one tag only" superseded by [0016](0016-ad-tags-behind-a-marketing-consent.md)
 - Date: 2026-09-16
 - PR: [#383](https://github.com/gugcz/devfest-website/pull/383) (supersedes the advanced mode from [#258](https://github.com/gugcz/devfest-website/pull/258))
 
