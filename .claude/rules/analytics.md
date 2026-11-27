@@ -66,7 +66,7 @@ button (the footer's About column, privacy policy §3) runs one delegated
 click listener in `src/lib/cookie-banner.ts`. It `clearConsent()`s and shows the
 banner, focused. After either accept the SDKs are already in the document and
 cannot be unloaded, so instead it `deleteMarketingData()`s (the first-party
-ad cookies in `MARKETING_COOKIES`, LinkedIn's `li_adsid` in localStorage) and
+ad cookies in `MARKETING_COOKIES`, LinkedIn's `li_adsId` in localStorage) and
 `deleteAnalyticsData()`s (`consent.ts`:
 `_ga*` cookies on the host and each parent domain, the
 `firebase-installations-database` IndexedDB, Performance's cached config in
@@ -141,14 +141,17 @@ Insight Tag, only after "Allow all" (`hasMarketingConsent()`), on the
 ids are set (`PUBLIC_META_PIXEL_ID`, `PUBLIC_LINKEDIN_PARTNER_ID`,
 `PUBLIC_LINKEDIN_CONVERSION_IDS`; repository variables, never in the repo).
 
-- `initAds()` installs each tag's queue stub at once and loads its script
-  on idle (`whenIdle()`), so an event fired right after the accept queues.
+- `initAds()` installs each tag's queue stub (the official snippets; Meta's
+  queues the `arguments` object, like gtag) and loads its script at once,
+  not on idle: a tag reads the page URL when its script runs. An event
+  fired right after the accept queues.
   The consent and `/login/` gates sit before the memo, like `initAnalytics()`.
 - Page views are ours: `trackAdPageView()` on every `astro:page-load`
   (from `cookie-banner.ts`, next to `trackPageView()`). Meta's own
   `pushState` tracking is off (`fbq.disablePushState`), so a soft
   navigation to `/login/<code>` is never reported. The Insight Tag counts
-  the page it loads on; later pages are `lintrk('track')`.
+  the page it loads on; soft navigations after its script ran are
+  `lintrk('track')`, earlier ones are left to it.
 - Events ride `track()` in `analytics.ts`, which also hands them to
   `trackAdEvent()`; `ad-events.ts` maps them (pure, tested):
   `begin_checkout` → `InitiateCheckout`, `ticket_purchase_confirmed` →

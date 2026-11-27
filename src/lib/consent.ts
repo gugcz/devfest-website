@@ -86,13 +86,13 @@ function expireCookies(matches: (name: string) => boolean): void {
 export const MARKETING_COOKIES = ['_fbp', '_fbc', 'li_fat_id', 'li_giant', 'ln_or'];
 
 /** Delete what an "Allow all" left behind: the first-party ad cookies and
- * LinkedIn's Ads id in localStorage. Never throws. Like
+ * LinkedIn's Ads id (`li_adsId`) in localStorage. Never throws. Like
  * `deleteAnalyticsData()`, the caller reloads, because the tags in memory
  * can write again. */
 export function deleteMarketingData(): void {
 	expireCookies((name) => MARKETING_COOKIES.includes(name));
 	try {
-		localStorage.removeItem('li_adsid');
+		localStorage.removeItem('li_adsId');
 	} catch {
 		/* storage unavailable — nothing was stored */
 	}

@@ -166,8 +166,8 @@ describe('deleteMarketingData', () => {
 	});
 
 	it("removes LinkedIn's Ads id from localStorage", () => {
-		store.set('li_adsid', 'abc');
+		store.set('li_adsId', 'abc');
 		deleteMarketingData();
-		assert.equal(store.has('li_adsid'), false);
+		assert.equal(store.has('li_adsId'), false);
 	});
 });
