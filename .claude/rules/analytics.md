@@ -3,6 +3,9 @@ paths:
   - "src/lib/firebase.ts"
   - "src/lib/analytics.ts"
   - "src/lib/consent.ts"
+  - "src/lib/ads.ts"
+  - "src/lib/ad-events.ts"
+  - "src/lib/tracking-gates.ts"
   - "src/components/aether/CookieBanner.astro"
   - "src/lib/cookie-banner.ts"
   - "src/routes/thank-you.astro"
@@ -13,13 +16,14 @@ paths:
 
 GA4 via Firebase Analytics in **basic Google Consent Mode**: nothing loads and
 nothing is sent to Google until the visitor accepts. `initAnalytics()` is a
-no-op while `readConsent()` (`src/lib/consent.ts`) isn't `accepted`; the
-accept handler in `src/lib/cookie-banner.ts` (the banner's behaviour;
+no-op until `hasAnalyticsConsent()` (`src/lib/consent.ts`: `accepted` =
+"Analytics only", or `accepted-marketing` = "Allow all"); the accept handler in `src/lib/cookie-banner.ts` (the banner's behaviour;
 markup in `src/components/aether/CookieBanner.astro`) stores the decision
 and calls
 `trackPageView()`, which boots the tag. The boot pushes `consent: 'default'`
-with `analytics_storage` granted and `ad_*` denied (we never collect for
-advertising), then `initializeAnalytics()`.
+with `analytics_storage` granted and `ad_*` denied (GA4 is never used for
+advertising; the Meta and LinkedIn tags are their own consent, "Ad tags"
+below), then `initializeAnalytics()`.
 
 Why not the cookieless "advanced" mode (PR #288 → this): GA4 surfaces
 unconsented pings only through behavioral modeling, which needs ≥1000
@@ -51,16 +55,19 @@ Rules (each verified in-browser):
   rewrites `location.href`), then the current page if the visitor
   soft-navigated before accepting. A late accept still attributes the session
   to the URL they arrived on (`utm_*`, external referrer).
-- **Host-gated** (`ANALYTICS_HOSTS`; `PUBLIC_ANALYTICS_ALLOWED_HOSTS`
-  overrides) — dev and previews send nothing.
+- **Host-gated** (`TRACKING_HOSTS` in `src/lib/tracking-gates.ts`;
+  `PUBLIC_ANALYTICS_ALLOWED_HOSTS` overrides) — dev and previews send
+  nothing. The ad tags share the gate.
 - Hits leave gtag's queue a few seconds after an accept (batched with the
   engagement ping; gtag flushes on `pagehide`). gtag's scheduling, not ours.
 
 **Withdrawing consent** (GDPR Art. 7(3)): every `[data-cookie-settings]`
 button (the footer's About column, privacy policy §3) runs one delegated
 click listener in `src/lib/cookie-banner.ts`. It `clearConsent()`s and shows the
-banner, focused. After an `accepted` the SDKs are already in the document and
-cannot be unloaded, so instead it `deleteAnalyticsData()`s (`consent.ts`:
+banner, focused. After either accept the SDKs are already in the document and
+cannot be unloaded, so instead it `deleteMarketingData()`s (the first-party
+ad cookies in `MARKETING_COOKIES`, LinkedIn's `li_adsId` in localStorage) and
+`deleteAnalyticsData()`s (`consent.ts`:
 `_ga*` cookies on the host and each parent domain, the
 `firebase-installations-database` IndexedDB, Performance's cached config in
 localStorage, Crashlytics' session id in sessionStorage) and reloads. A
@@ -130,6 +137,35 @@ never boots on that path; `scheduleCrashlytics()` follows the same rule.
 - `trackConversion(pathname, name)` guards path **and** repeats — an
   `astro:page-load` listener survives soft navigations.
 - Mark the three conversions as key events in GA4 (README "Analytics").
+
+**Ad tags** (`src/lib/ads.ts`, ADR 0016): the Meta Pixel and the LinkedIn
+Insight Tag, only after "Allow all" (`hasMarketingConsent()`), on the
+`TRACKING_HOSTS`, never on `/login/<code>`, and only when their build-time
+ids are set (`PUBLIC_META_PIXEL_ID`, `PUBLIC_LINKEDIN_PARTNER_ID`,
+`PUBLIC_LINKEDIN_CONVERSION_IDS`; repository variables, never in the repo).
+
+- `initAds()` installs each tag's queue stub (the official snippets; Meta's
+  queues the `arguments` object, like gtag) and loads its script at once,
+  not on idle: a tag reads the page URL when its script runs. An event
+  fired right after the accept queues.
+  The consent and `/login/` gates sit before the memo, like `initAnalytics()`.
+- Page views are ours: `trackAdPageView()` on every `astro:page-load`
+  (from `cookie-banner.ts`, next to `trackPageView()`). Meta's own
+  `pushState` tracking is off (`fbq.disablePushState`), so a soft
+  navigation to `/login/<code>` is never reported. The Insight Tag counts
+  the page it loads on; soft navigations after its script ran are
+  `lintrk('track')`, earlier ones are left to it.
+- Events ride `track()` in `analytics.ts`, which also hands them to
+  `trackAdEvent()`; `ad-events.ts` maps them (pure, tested):
+  `begin_checkout` → `InitiateCheckout`, `ticket_purchase_confirmed` →
+  `Purchase` (no value), `generate_lead` → `Lead`, `sign_up` →
+  `CompleteRegistration`; value and currency go together or not at all.
+  LinkedIn gets a conversion only for an event with an id in
+  `PUBLIC_LINKEDIN_CONVERSION_IDS`.
+- A late "Allow all" after a soft navigation loses the entry URL for Meta
+  (`fbclid`, `utm_*`): the pixel reads the current URL. GA4 keeps it.
+- No server-side Conversions API and no GTM (brainstorm
+  `2026-11-23-ads-conversion-tracking`).
 
 **Data stores:** RTDB `/tickets` (ti.to cache, daily) and `/workshops`
 (seats, registrations); Firestore `speakers`/`sessions`/`rooms` (Sessionize)

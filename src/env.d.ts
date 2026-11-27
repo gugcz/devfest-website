@@ -12,6 +12,16 @@ interface ImportMetaEnv {
 	/** Comma-separated hosts allowed to report into production GA4, overriding
 	 * the `devfest.cz` list. Set to a preview host to measure it on purpose. */
 	readonly PUBLIC_ANALYTICS_ALLOWED_HOSTS?: string;
+	/** Meta Pixel id (GitHub Actions variable). Unset → no Meta tag. Kept out
+	 * of the repo, like every ad account id. */
+	readonly PUBLIC_META_PIXEL_ID?: string;
+	/** LinkedIn Insight Tag partner id (GitHub Actions variable). Unset → no
+	 * LinkedIn tag. */
+	readonly PUBLIC_LINKEDIN_PARTNER_ID?: string;
+	/** LinkedIn conversion ids per event, `event:id,event:id`
+	 * (`begin_checkout`, `ticket_purchase_confirmed`, `generate_lead`,
+	 * `sign_up`). An event without an id sends no LinkedIn conversion. */
+	readonly PUBLIC_LINKEDIN_CONVERSION_IDS?: string;
 	/** Origin for absolute URLs (e.g. the invite OG image); default
 	 * `https://devfest.cz`. Set to a preview channel to verify against it. */
 	readonly PUBLIC_SITE_URL?: string;

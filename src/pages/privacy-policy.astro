@@ -109,8 +109,9 @@ const SECTIONS = [
 							even when no error happens.
 						</p>
 						<p>
-							The data is used only for analytics and for fixing errors — never for advertising,
-							ad personalisation, or profiling.
+							This analytics data is used only for analytics and for fixing errors — never for
+							advertising, ad personalisation, or profiling. Advertising measurement is a separate
+							choice, described in g) below; "Analytics only" in the cookie banner keeps it off.
 						</p>
 
 						<h3>c) Server logs</h3>
@@ -160,6 +161,33 @@ const SECTIONS = [
 							elsewhere. Legal basis: legitimate interests (GDPR Art. 6(1)(f)), showing what the
 							conference is like.
 						</p>
+
+						<h3>g) Advertising measurement (Meta, LinkedIn)</h3>
+						<p>
+							We advertise DevFest.cz on Facebook, Instagram and LinkedIn. To see which ads bring
+							visitors and ticket buyers, and to show our ads again to people who visited the site,
+							we use the Meta Pixel and the LinkedIn Insight Tag. They run only if you choose
+							"Allow all" in the cookie banner. "Analytics only" and "Decline" keep them off.
+						</p>
+						<p>
+							<strong>If you allow them:</strong> your browser loads code from Meta and LinkedIn,
+							which receive your IP address, browser information, the pages you visit on this site
+							and the same interaction events as analytics (opening the ticket checkout, a ticket
+							purchase, a newsletter sign-up, a company invoice request), with the ticket price where
+							we know it. They set the cookies listed below, and may match the visit to your Facebook,
+							Instagram or LinkedIn account. We never send them your name, email, or anything you type.
+							Meta and LinkedIn also process this data under their own privacy policies
+							(<a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer">Meta</a>,
+							<a href="https://www.linkedin.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">LinkedIn</a>).
+							Legal basis: consent (GDPR Art. 6(1)(a)).
+						</p>
+						<p>
+							You can withdraw this consent at any time with
+							<button type="button" class="cookie-settings" data-cookie-settings>Cookie settings</button>,
+							which deletes the advertising cookies on this site, forgets your choice and asks again.
+							Cookies Meta and LinkedIn keep on their own domains can only be removed there or in
+							your browser.
+						</p>
 					</section>
 
 					<section id="cookies">
@@ -199,6 +227,16 @@ const SECTIONS = [
 									<td data-label="Duration">Until you close the tab</td>
 								</tr>
 								<tr>
+									<th scope="row"><code>_fbp</code>, <code>_fbc</code></th>
+									<td data-label="Purpose">Meta Pixel browser and ad-click ids — only set after "Allow all"</td>
+									<td data-label="Duration">3 months</td>
+								</tr>
+								<tr>
+									<th scope="row"><code>li_fat_id</code>, <code>li_giant</code>, <code>ln_or</code>, <code>li_adsId</code></th>
+									<td data-label="Purpose">LinkedIn Insight Tag ad-click and conversion ids (<code>li_adsId</code> in localStorage) — only set after "Allow all"; LinkedIn also sets cookies on linkedin.com</td>
+									<td data-label="Duration">Up to 30 days; <code>li_adsId</code> until you clear browser storage</td>
+								</tr>
+								<tr>
 									<th scope="row"><code>_GRECAPTCHA</code></th>
 									<td data-label="Purpose">Google reCAPTCHA — bot protection on the company invoice and workshop sign-up pages (set for security, not consent-gated)</td>
 									<td data-label="Duration">6 months</td>
@@ -227,6 +265,12 @@ const SECTIONS = [
 							<li>iDoklad (Solitea a.s. / Seyfor, <a href="https://www.idoklad.cz" target="_blank" rel="noopener noreferrer">idoklad.cz</a>) — issuing company invoices</li>
 							<li>ti.to — ticket sales and discount-code redemption</li>
 						</ul>
+						<p>
+							Only if you choose "Allow all": Meta Platforms Ireland Ltd. (Meta Pixel) and
+							LinkedIn Ireland Unlimited Company (Insight Tag) receive the advertising measurement
+							data described in 2g. They are not our processors; they also use the data for their
+							own purposes, under their own privacy policies.
+						</p>
 					</section>
 
 					<section id="your-rights">

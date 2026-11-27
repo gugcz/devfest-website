@@ -1,10 +1,17 @@
-/** Fire-and-forget GA4 events. Loads `firebase.ts` on demand — a static
- * import would bundle the whole SDK into an island. Never throws or blocks. */
+/** Fire-and-forget events to GA4 and, after "Allow all", the ad tags
+ * (`ads.ts` maps which ones they hear). Loads `firebase.ts` on demand — a
+ * static import would bundle the whole SDK into an island. Never throws or
+ * blocks. */
 export function track(name: string, params?: Record<string, unknown>): void {
 	void import('./firebase')
 		.then((m) => m.trackEvent(name, params))
 		.catch((err) => {
 			console.warn(`[analytics] event ${name} failed:`, err);
+		});
+	void import('./ads')
+		.then((m) => m.trackAdEvent(name, params))
+		.catch((err) => {
+			console.warn(`[analytics] ad event ${name} failed:`, err);
 		});
 }
 

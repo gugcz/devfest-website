@@ -60,6 +60,8 @@ edition is not announced; copy never says "one day".
   with the mobile app.
 - Analytics is GA4 behind Consent Mode; only consenting visitors are counted.
   Crashlytics reports browser errors behind the same consent.
+  The Meta Pixel and LinkedIn Insight Tag run only after "Allow all"
+  (ad conversions and visitor audiences); "Analytics only" keeps them off.
   "Cookie settings" (footer, privacy policy §3) withdraws or changes the
   choice at any time.
 - **[inferred]** Most visitors arrive on a phone from social or the community

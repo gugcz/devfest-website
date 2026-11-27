@@ -1,14 +1,23 @@
 /**
  * The cookie banner's behaviour (`src/components/aether/CookieBanner.astro`).
- * The markup renders `#cookie-banner` with `#cookie-accept` and
- * `#cookie-decline` and the `cookie-banner--hidden` class, and imports this
+ * The markup renders `#cookie-banner` with `#cookie-accept-all` (analytics
+ * and the ad tags), `#cookie-accept` (analytics only) and `#cookie-decline`,
+ * and the `cookie-banner--hidden` class, and imports this
  * module from a `<script>`; it binds once per document. Rules: `.claude/rules/analytics.md`.
  */
 // Consent storage lives in `src/lib/consent.ts` because `src/lib/firebase.ts`
 // reads the same decision to decide whether GA4 boots at all. Static import
 // (not dynamic): the module is a few lines of localStorage access and pulls in
 // no Firebase code.
-import { clearConsent, deleteAnalyticsData, readConsent, storeConsent } from './consent';
+import {
+	clearConsent,
+	deleteAnalyticsData,
+	deleteMarketingData,
+	hasAnalyticsConsent,
+	readConsent,
+	storeConsent,
+	type ConsentDecision,
+} from './consent';
 
 // One-shot sessionStorage flag set by "Cookie settings" before its reload
 // (below): the fresh page deletes the analytics data once more and focuses
@@ -30,6 +39,18 @@ async function trackPageView() {
 		await mod.trackPageView();
 	} catch (err) {
 		console.warn('[cookie-banner] Failed to track page view:', err);
+	}
+}
+
+// The ad tags' page view, same rules: nothing loads without "Allow all"
+// (`initAds()` reads the stored decision), and `ads.ts` is a few lines, its
+// tags load from Meta and LinkedIn only after that.
+async function trackAdPageView() {
+	try {
+		const mod = await import('./ads');
+		mod.trackAdPageView();
+	} catch (err) {
+		console.warn('[cookie-banner] Failed to track ad page view:', err);
 	}
 }
 
@@ -76,6 +97,7 @@ document.addEventListener('astro:page-load', () => {
 	// reads the stored decision. A stored `accepted` boots GA4 right here, on
 	// the entry page, so the document-load `page_view` is attributed.
 	trackPageView();
+	trackAdPageView();
 
 	// Banner starts hidden — reveal only if no decision yet
 	if (!readConsent()) {
@@ -87,16 +109,21 @@ document.addEventListener('astro:page-load', () => {
 	// open), then focus the banner the visitor asked for.
 	if (takeWithdrawnFlag()) {
 		deleteAnalyticsData();
+		deleteMarketingData();
 		document.getElementById('cookie-banner')?.focus();
 	}
 
-	document.getElementById('cookie-accept')?.addEventListener('click', () => {
-		storeConsent('accepted');
+	// Either accept boots GA4 now: it reports the entry page (campaign
+	// parameters, referrer), then the current one if the visitor
+	// soft-navigated before accepting. "Allow all" boots the ad tags too.
+	const accept = (decision: ConsentDecision) => () => {
+		storeConsent(decision);
 		hideBanner();
-		// Boots GA4 now: reports the entry page (campaign parameters, referrer),
-		// then the current one if the visitor soft-navigated before accepting.
 		trackPageView();
-	});
+		trackAdPageView();
+	};
+	document.getElementById('cookie-accept-all')?.addEventListener('click', accept('accepted-marketing'));
+	document.getElementById('cookie-accept')?.addEventListener('click', accept('accepted'));
 
 	document.getElementById('cookie-decline')?.addEventListener('click', () => {
 		storeConsent('declined');
@@ -129,15 +156,17 @@ document.addEventListener('keydown', (e) => {
 
 // "Cookie settings" (footer, privacy policy) forgets the decision and asks
 // again (GDPR Art. 7(3): withdrawing is as easy as giving). After an accept
-// GA4, Performance Monitoring and Crashlytics are loaded in this document and
-// cannot be unloaded, so their cookies and storage are deleted and the page reloads
+// GA4, Performance Monitoring, Crashlytics and (after "Allow all") the ad tags
+// are loaded in this document and cannot be unloaded, so their cookies and
+// storage are deleted and the page reloads
 // clean; nothing runs while the visitor decides again. Delegated, because
 // <ClientRouter /> swaps the buttons on every navigation.
 document.addEventListener('click', async (e) => {
 	if (!(e.target instanceof Element) || !e.target.closest('[data-cookie-settings]')) return;
-	const accepted = readConsent() === 'accepted';
+	const accepted = hasAnalyticsConsent();
 	clearConsent();
 	if (accepted) {
+		deleteMarketingData();
 		await deleteAnalyticsData();
 		try {
 			sessionStorage.setItem(WITHDRAWN, '1');
