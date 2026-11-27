@@ -491,8 +491,9 @@ Fixed bottom-right, at most 30rem: ink veil, a 1px `print-edge` border. A
 question in ivory at the row-title size and weight 600, one line of muted
 ivory at the small size on why we ask, with the privacy policy link. Every
 choice (Allow all, Analytics only, Decline) is the same framed portal
-(`.btn-framed`, minimum width released), at the same width: equal choices,
-none pushed (GDPR). They share a row while they fit and wrap otherwise.
+(`.btn-framed`, minimum width released down to its longest word, so a
+label never breaks mid-word), at the same width: equal choices, none pushed
+(GDPR). They share a row while they fit and wrap otherwise.
 
 ### Navigation
 - **Menu bar** (`Menu.astro`): fixed, `header-h` tall; the DF27 mark left,

@@ -84,9 +84,14 @@
 		margin-top: 0.5rem;
 	}
 
+	// The portal's 280px minimum is released, but only down to the longest
+	// word: `break-word` keeps a word whole in the min-content width, so
+	// "Analytics only" wraps between its words (or the choice takes its own
+	// row) instead of mid-word. `max-width: 100%` still caps it on a phone.
 	.cookie-btn {
 		flex: 1 1 9rem;
-		min-width: 0;
+		min-width: auto;
+		overflow-wrap: break-word;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
