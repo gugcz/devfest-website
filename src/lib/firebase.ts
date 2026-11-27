@@ -7,7 +7,8 @@ import {
 	setDefaultEventParameters,
 	type Analytics,
 } from 'firebase/analytics';
-import { readConsent } from './consent';
+import { hasAnalyticsConsent } from './consent';
+import { isAppLinkPath, isTrackingHost, redactAppLink, whenIdle } from './tracking-gates';
 import config from '../site.config';
 
 const firebaseConfig = config.site.firebase;
@@ -77,19 +78,10 @@ const ANALYTICS_CONSENT = {
 	analytics_storage: 'granted',
 } as const;
 
-/** Hosts (and subdomains) that report into production GA4 — dev and preview
- * channels stay out. `PUBLIC_ANALYTICS_ALLOWED_HOSTS` overrides. */
-const ANALYTICS_HOSTS = ['devfest.cz', 'devfest-public.web.app', 'devfest-public.firebaseapp.com'];
-
+/** Production hosts only (`tracking-gates.ts`); dev and preview channels stay
+ * out. `PUBLIC_ANALYTICS_ALLOWED_HOSTS` overrides. */
 function isAnalyticsHost(): boolean {
-	const override = import.meta.env.PUBLIC_ANALYTICS_ALLOWED_HOSTS ?? '';
-	const configured = override
-		.split(',')
-		.map((h) => h.trim().toLowerCase())
-		.filter(Boolean);
-	const allowed = configured.length > 0 ? configured : ANALYTICS_HOSTS;
-	const host = window.location.hostname.toLowerCase();
-	return allowed.some((h) => host === h || host.endsWith(`.${h}`));
+	return isTrackingHost(window.location.hostname, import.meta.env.PUBLIC_ANALYTICS_ALLOWED_HOSTS);
 }
 
 /** Push a raw gtag command. gtag.js only honours the `arguments` object — a
@@ -130,7 +122,7 @@ let lastPageLocation: string | null = null;
  */
 export function initAnalytics(): Promise<void> {
 	if (typeof window === 'undefined') return Promise.resolve();
-	if (readConsent() !== 'accepted') return Promise.resolve();
+	if (!hasAnalyticsConsent()) return Promise.resolve();
 	analyticsInit ??= (async () => {
 		try {
 			if (!isAnalyticsHost()) {
@@ -199,35 +191,6 @@ function scheduleCrashlytics(): void {
 			console.warn('[firebase] Crashlytics init failed:', err);
 		}
 	});
-}
-
-/** Run `boot` once the browser is idle, so an SDK chunk never competes with
- * the page. */
-function whenIdle(boot: () => Promise<void>): void {
-	if ('requestIdleCallback' in window) {
-		requestIdleCallback(() => void boot(), { timeout: 5000 });
-	} else {
-		setTimeout(() => void boot(), 2000);
-	}
-}
-
-/** `/login/<code>`: the app's sign-in link. The code in the path is a
- * credential, so it never reaches GA4, Performance Monitoring or
- * Crashlytics. */
-function isAppLinkPath(pathname: string): boolean {
-	return /^\/login(?:\/|$)/.test(pathname);
-}
-
-/** The URL with an app-link path cut to `/login/`, query and hash dropped;
- * any other URL unchanged. */
-function redactAppLink(url: string): string {
-	try {
-		const { origin, pathname } = new URL(url);
-		if (!isAppLinkPath(pathname)) return url;
-		return `${origin}/login/`;
-	} catch {
-		return url;
-	}
 }
 
 /**
