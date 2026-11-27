@@ -28,6 +28,11 @@ site never qualifies (Reporting identity shows modeling inactive), so the
 pings bought nothing — and the tag's own `page_view` (the one carrying
 `_ss`/`_fv` and the campaign parameters) went out only cookieless and was
 dropped. Consented visitors only, honestly counted, is the better deal.
+Re-tested 2026-11-27 (ADR 0007, "Revisited"): Firebase Analytics writes a
+Firebase Installations id to IndexedDB (`firebase-installations-database`)
+the moment it loads, before any choice, and sends it as `_fid` with
+cookieless hits too. So advanced mode is off the table while GA4 runs
+through the Firebase SDK; it would need plain gtag.js.
 
 Rules (each verified in-browser):
 

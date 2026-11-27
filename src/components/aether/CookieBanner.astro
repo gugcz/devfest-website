@@ -1,18 +1,21 @@
 ---
 /**
  * The cookie slip (`docs/design.md`, "Cookie slip"). The markup contract and
- * the behaviour live in `src/lib/cookie-banner.ts`. Accept is the solid
- * portal (`.btn-primary`); Decline is a text action.
+ * the behaviour live in `src/lib/cookie-banner.ts`. A heading asks, one line
+ * says why, and every choice is the same framed portal: none is pushed.
+ * The choices wrap, so a third one fits without a new layout.
  */
 ---
 
-<div id="cookie-banner" class="cookie-banner cookie-banner--hidden" tabindex="-1" role="region" aria-label="Cookie consent" aria-live="polite" aria-hidden="true">
+<div id="cookie-banner" class="cookie-banner cookie-banner--hidden" tabindex="-1" role="region" aria-labelledby="cookie-title" aria-live="polite" aria-hidden="true">
+	<p id="cookie-title" class="cookie-title">Can we count your visit?</p>
 	<p class="cookie-text">
-		May we use analytics cookies? Details in our <a href="/privacy-policy">Privacy Policy</a>.
+		Google Analytics shows us which pages help. It runs only if you allow it.
+		Details in our <a href="/privacy-policy">Privacy Policy</a>.
 	</p>
 	<div class="cookie-actions">
-		<button id="cookie-accept" type="button" class="btn-primary cookie-btn cookie-btn--accept">Accept</button>
-		<button id="cookie-decline" type="button" class="cookie-btn cookie-btn--decline">Decline</button>
+		<button id="cookie-accept" type="button" class="btn-framed cookie-btn">Allow</button>
+		<button id="cookie-decline" type="button" class="btn-framed cookie-btn">Decline</button>
 	</div>
 </div>
 
@@ -28,13 +31,13 @@
 		right: min(var(--gutter), 5vw);
 		bottom: calc(min(1.25rem, 4vw) + env(safe-area-inset-bottom));
 		z-index: 10000;
-		width: min(26rem, calc(100% - 2 * min(var(--gutter), 5vw)));
+		width: min(30rem, calc(100% - 2 * min(var(--gutter), 5vw)));
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
-		padding: 1.25rem 1.4rem;
+		gap: 0.75rem;
+		padding: 1.5rem 1.6rem 1.4rem;
 		background: var(--ink-veil);
-		border: 1px solid rgba(207, 168, 98, 0.45);
+		border: 1px solid var(--print-edge);
 		color: var(--ivory);
 		transition: opacity 0.3s, transform 0.3s, visibility 0s;
 
@@ -51,50 +54,41 @@
 		transition-delay: 0s, 0s, 0.3s;
 	}
 
+	.cookie-title {
+		margin: 0;
+		font-size: var(--fs-row-sm);
+		font-weight: 600;
+		line-height: 1.25;
+		color: var(--ivory);
+	}
+
 	.cookie-text {
 		margin: 0;
 		font-size: var(--fs-small);
 		line-height: 1.55;
+		color: var(--ivory-muted);
+
+		a {
+			color: var(--ivory);
+		}
 	}
 
+	// Every choice is the same framed portal, at the same width. They share a
+	// row while they fit and wrap otherwise, a third choice included.
 	.cookie-actions {
 		display: flex;
-		align-items: center;
-		gap: 1.25rem;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
 	}
 
-	// Accept is the global solid portal; here it only gives up the portal's
-	// minimum width so the slip keeps both choices on one line.
-	.cookie-btn--accept {
+	.cookie-btn {
+		flex: 1 1 9rem;
 		min-width: 0;
 	}
 
-	.cookie-btn--decline {
-		@include label(var(--fs-small), 0.18em);
-		min-height: 44px;
-		padding: 0;
-		border: 0;
-		background: none;
-		cursor: pointer;
-		color: var(--ivory);
-		text-decoration: underline;
-		text-decoration-color: var(--brass);
-		text-underline-offset: 0.3em;
-		transition: color 0.3s ease;
-
-		&:hover {
-			color: var(--brass-light);
-			text-decoration-color: var(--aether);
-		}
-
-		&:focus-visible {
-			@include focus-ring(3px);
-		}
-	}
-
 	@media (prefers-reduced-motion: reduce) {
-		.cookie-banner,
-		.cookie-btn--decline {
+		.cookie-banner {
 			transition: none;
 		}
 	}
