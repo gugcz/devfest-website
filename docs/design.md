@@ -154,7 +154,7 @@ components:
     backgroundColor: "{colors.ink-veil}"
     textColor: "{colors.ivory}"
     typography: "{typography.small}"
-    padding: "1.25rem 1.4rem"
+    padding: "1.5rem 1.6rem 1.4rem"
   menu-bar:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ivory}"
@@ -259,9 +259,9 @@ A night palette: blue-black ink, warm ivory, aged brass, and one cold light.
   text: the stage line, notes, ledes, consent copy. 11.05:1 on ink.
 
 Brass at an alpha over ink draws every line: `rule` (22%) a plate's edge,
-`rule-strong` (40%) a stronger divider, 45% the cookie slip, 50% a print
-frame, and `field-border` (70%, 4.76:1, above the 3:1 non-text floor) a
-control boundary.
+`rule-strong` (40%) a stronger divider, `print-edge` (50%) a print
+frame and the cookie slip, and `field-border` (70%, 4.76:1, above the
+3:1 non-text floor) a control boundary.
 
 ### Named Rules
 **[MUST] The Cold Light Rule.** The aether colour is a response, never a
@@ -437,14 +437,14 @@ A beveled brass frame drawn in ink, the aether's button.
 
 **[MUST] The One Portal Rule.** One solid portal per screen. A form's
 submit (the newsletter) or a second choice (the last edition beside the
-stage's action) is framed. The cookie slip's Accept is the solid portal in
-its own fixed layer and does not count against the page.
+stage's action) is framed. The cookie slip has no solid portal: its
+choices are all framed, so none is pushed.
 
 ### Text action
 `.action` (`.btn-ghost` is the same thing): the action voice in ivory, a
 brass underline, aether underline and brass-light text when reached; a
 44px target with no box. The second control everywhere: closers, end
-lines, plates, the cookie Decline.
+lines, plates.
 
 ### Season mark
 `SeasonMark.astro`: "Fall 2027" hand-lettered as SVG strokes in the brass
@@ -487,9 +487,13 @@ light over its muted term.
   with an ink tick; native in forced colours.
 
 ### Cookie slip
-Fixed bottom-right, at most 26rem: ink veil, a 1px brass border (45%), small
-ivory text. Accept is the solid portal (`.btn-primary`, minimum width
-released); Decline is a text action.
+Fixed bottom-right, at most 30rem: ink veil, a 1px `print-edge` border. A
+question in ivory at the row-title size and weight 600, one line of muted
+ivory at the small size on why we ask, with the privacy policy link. Every
+choice (Allow, Decline) is the same framed portal (`.btn-framed`, minimum
+width released), at the same width: equal choices, none pushed (GDPR).
+They share a row while they fit and wrap otherwise, so a third choice
+fits without a new layout.
 
 ### Navigation
 - **Menu bar** (`Menu.astro`): fixed, `header-h` tall; the DF27 mark left,

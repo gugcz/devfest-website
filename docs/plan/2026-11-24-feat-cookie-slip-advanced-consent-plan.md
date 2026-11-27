@@ -10,7 +10,25 @@ Brainstorm: `docs/brainstorm/2026-11-24-cookie-slip-and-advanced-consent-mode-br
 Branch: `feat/cookie-slip-advanced-consent` (brainstorm already committed).
 On build, this plan is copied to `docs/plan/2026-11-24-feat-cookie-slip-advanced-consent-plan.md` and committed first.
 
+## Outcome (2026-11-27)
+
+Phase 2 shipped; phases 1 and 3 did not. GA4 stays in basic Consent Mode
+(ADR 0007, "Revisited").
+
+- The spike confirmed the old bug: `_fv`/`_ss` leave with the first hit,
+  so a cookieless hit before an Accept costs the consented session its
+  start. Candidates A and B both failed; holding the first hit until the
+  choice fixed it.
+- It also found Firebase Analytics writing a Firebase Installations id to
+  IndexedDB on load, before any choice, and sending it as `_fid`. That
+  rules out advanced mode through the Firebase SDK.
+- The slip's Accept is labelled "Allow": "Allow analytics" broke inside the
+  framed portal. The privacy policy follows the label. The copy promises
+  nothing about ads, since a later change may add marketing choices.
+
 ## Context
+
+The plan as approved on 2026-11-24 follows; the outcome above supersedes it.
 
 The cookie slip is easy to miss on the painting and does not say why we ask.
 Decline is a text action beside a solid Accept.
