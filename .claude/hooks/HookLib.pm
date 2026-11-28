@@ -2,10 +2,12 @@
 # paths the hooks guard.
 #
 # Guarded paths:
-# - Build output and lockfiles: deny. Change the source or the manifest and
-#   rebuild or reinstall instead.
+# - Build output and lockfiles: an Edit is denied (change the source or the
+#   manifest and rebuild or reinstall instead); a Bash write asks, and a
+#   Bash removal passes, since builds and installs write and clean them.
 # - Files that reach the Firebase project shared with the mobile app or the
-#   production deploy, and the agent guardrails themselves: ask first.
+#   production deploy, and the agent guardrails themselves: an Edit, a Bash
+#   write and a Bash removal all ask first.
 #
 # Perl core modules only, so there is no dependency to fail open on.
 package HookLib;
@@ -30,10 +32,12 @@ sub git_line {
 	return $line;
 }
 
-# Absolute, lexically normalised path (`./`, `..`, `//`), with the deepest
-# existing ancestor run through realpath so a symlinked folder resolves.
+# Absolute, lexically normalised path (`~`, `./`, `..`, `//`), with the
+# deepest existing ancestor run through realpath so a symlinked folder
+# resolves.
 sub resolve {
 	my ($path, $base) = @_;
+	$path = ($ENV{HOME} // '') . substr($path, 1) if $path =~ m{^~(?:/|$)};
 	$path = "$base/$path" unless $path =~ m{^/};
 	my @parts;
 	for my $part (split m{/+}, $path) {
@@ -86,7 +90,7 @@ sub classify {
 	return ('ask', "$rel reaches the Firebase project shared with the mobile app or the production deploy. Read CLAUDE.md > Firebase shared project before changing it.")
 		if $rel =~ m{^(?:firebase\.json|\.firebaserc|public/\.well-known/apple-app-site-association|\.github/workflows/firebase-[\w-]+\.yml)$}i;
 	return ('ask', "$rel is an agent guardrail (a hook or the shared permissions). Changing it changes what agents may do.")
-		if $rel =~ m{^\.claude/(?:hooks/|settings\.json$)}i;
+		if $rel =~ m{^\.claude/(?:hooks(?:/|$)|settings\.json$)}i;
 	return ('', '');
 }
 

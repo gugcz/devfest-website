@@ -65,23 +65,23 @@ hooks and the deny rules guards the Firebase CLI and the MCP tools. On
 - **Scope:** Close every bypass and false positive the review found in the three hooks, deny the MCP tools that deploy or merge, and add the setup test file to `verify` and CI.
 - **Files touched:** `.claude/hooks/block-deploy.sh`, `.claude/hooks/guard-edits.sh`, `.claude/hooks/session-start.sh`, `.claude/hooks/HookLib.pm` (new, the guarded paths both hooks share), `scripts/claude-setup.test.mjs` (new), `.claude/rules/sessionize.md` (its two dead globs, which the new check fails on), `.claude/settings.json`, `package.json`, `.github/workflows/correctness.yml`, `docs/adr/0017-agent-guardrails-cover-the-firebase-cli-and-mcp.md` (new), `docs/adr/README.md`, `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`
 - **Acceptance criteria:**
-  - [ ] `block-deploy.sh` denies `firebase-tools@<version>` behind any wrapper: `npx`, `npm exec`, `pnpm dlx`, `yarn dlx`, `bun x`.
-  - [ ] It denies every Firebase verb outside the allowlist, global flags before the verb included, and `hosting:channel:deploy live`.
-  - [ ] It denies `gh pr … merge` with `-R`/`--repo` anywhere, `gh api` merges, auto-merge and reruns, `gh run rerun` and `gh alias set`.
-  - [ ] It denies `git push --all`, `--mirror` and `*` refspecs.
-  - [ ] It unwraps subshells, braces, `if/then`, `for/do`, `!`, `timeout N`, `nice`, a leading `\`, `$()`, backticks, `xargs`, `bash <<<`, `| sh`, a trailing `&` and redirections.
-  - [ ] It allows `git tag -l/--list/--contains`, `git push origin fix/main`, and a quoted multi-line commit or PR body that mentions a blocked command.
-  - [ ] It asks when a Bash command writes to a guarded path: `sed -i`, `perl -i`, `>`, `tee`, `cp` or `mv` into it.
-  - [ ] It also runs for `mcp__terminal__run_in_terminal`, preferring `tool_input.cwd` when present.
-  - [ ] `guard-edits.sh` normalises `./`, `..`, `//`, case and a trailing slash, and resolves each file against its own worktree root.
-  - [ ] `guard-edits.sh` asks before edits to `.claude/hooks/**`, `.claude/settings.json` and `.firebaserc`.
-  - [ ] `session-start.sh` checks `node_modules/.package-lock.json`, removes a partial `node_modules` after a failed `npm ci`, and prints the failure to stdout.
-  - [ ] `settings.json` gains `$schema`, `disableBypassPermissionsMode: "disable"`, exec-form hook commands (`args: []`, which the hooks docs prefer to quoting), and `**/` forms of the existing `.env` denies. `Read(**/.env.*)` would also hide the committed `.env.example`.
-  - [ ] `settings.json` allows `npm run literals`, `npm run test:site` and `npm run test:claude`.
-  - [ ] `settings.json` denies the Firebase MCP write tools, `mcp__ccd_pr__set_auto_merge` and `mcp__*__merge_pull_request`.
-  - [ ] `npm run verify` and the `site-checks` CI job run `test:claude`, the job step guarded like its siblings.
-  - [ ] ADR 0017 records the Firebase CLI allowlist and the MCP deny rules, and `docs/adr/README.md` lists it.
-  - [ ] CLAUDE.md, README and CONTRIBUTING.md list `test:claude` among the `verify` steps, and CLAUDE.md's hook lines describe the new coverage.
+  - [x] `block-deploy.sh` denies `firebase-tools@<version>` behind any wrapper: `npx`, `npm exec`, `pnpm dlx`, `yarn dlx`, `bun x`.
+  - [x] It denies every Firebase verb outside the allowlist, global flags before the verb included, and `hosting:channel:deploy live`.
+  - [x] It denies `gh pr … merge` with `-R`/`--repo` anywhere, `gh api` merges, auto-merge and reruns, `gh run rerun` and `gh alias set`.
+  - [x] It denies `git push --all`, `--mirror` and `*` refspecs.
+  - [x] It unwraps subshells, braces, `if/then`, `for/do`, `!`, `timeout N`, `nice`, a leading `\`, `$()`, backticks, `xargs`, `bash <<<`, `| sh`, a trailing `&` and redirections.
+  - [x] It allows `git tag -l/--list/--contains`, `git push origin fix/main`, and a quoted multi-line commit or PR body that mentions a blocked command.
+  - [x] It asks when a Bash command writes to a guarded path: `sed -i`, `perl -i`, `>`, `tee`, `cp` or `mv` into it.
+  - [x] It also runs for `mcp__terminal__run_in_terminal`, preferring `tool_input.cwd` when present.
+  - [x] `guard-edits.sh` normalises `./`, `..`, `//`, case and a trailing slash, and resolves each file against its own worktree root.
+  - [x] `guard-edits.sh` asks before edits to `.claude/hooks/**`, `.claude/settings.json` and `.firebaserc`.
+  - [x] `session-start.sh` checks `node_modules/.package-lock.json`, removes a partial `node_modules` after a failed `npm ci`, and prints the failure to stdout.
+  - [x] `settings.json` gains `$schema`, `disableBypassPermissionsMode: "disable"`, exec-form hook commands (`args: []`, which the hooks docs prefer to quoting), and `**/` forms of the existing `.env` denies. `Read(**/.env.*)` would also hide the committed `.env.example`.
+  - [x] `settings.json` allows `npm run literals`, `npm run test:site` and `npm run test:claude`.
+  - [x] `settings.json` denies the Firebase MCP write tools, `mcp__ccd_pr__set_auto_merge` and `mcp__*__merge_pull_request`.
+  - [x] `npm run verify` and the `site-checks` CI job run `test:claude`, the job step guarded like its siblings.
+  - [x] ADR 0017 records the Firebase CLI allowlist and the MCP deny rules, and `docs/adr/README.md` lists it.
+  - [x] CLAUDE.md, README and CONTRIBUTING.md list `test:claude` among the `verify` steps, and CLAUDE.md's hook lines describe the new coverage.
 - **Validation:** `npm run test:claude`
 
 ## Success Criteria

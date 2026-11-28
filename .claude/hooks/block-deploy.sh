@@ -8,17 +8,19 @@
 # - git push to `main` or a year branch (`2026`, …), of every branch (`--all`,
 #   `--mirror`, a `*` refspec) or of tags; a bare push from `main`, a year
 #   branch or a branch that cannot be resolved
-# - release tags, PR merges and auto-merge, workflow dispatch and reruns, gh
-#   aliases (one can hide a merge)
+# - release tags and releases, PR merges and auto-merge, workflow dispatch
+#   and reruns, gh aliases (one can hide a merge)
 # - every firebase CLI verb outside the allowlist (ADR 0017)
 # - `deploy` package scripts
-# - a command fed by `xargs` or read by a bare shell from stdin, since neither
-#   shows what runs
-# Asks (JSON on stdout) when a command writes to a guarded path (HookLib.pm).
+# - a command fed by `xargs` or read by a bare shell from stdin or a heredoc,
+#   since neither shows what runs
+# Asks (JSON on stdout) when a command changes a guarded path (HookLib.pm).
+# The cases it must deny, ask about and allow: scripts/claude-setup.test.mjs.
 #
 # A belt, not a boundary: the GitHub ruleset guards `main` and the year
 # branches. Nothing but this hook and the deny rules in settings.json guards
-# the Firebase CLI and the MCP tools.
+# the Firebase CLI and the MCP tools. settings.json sets `onFailure: block`,
+# so a hook that cannot run blocks the command instead of letting it through.
 use strict;
 use warnings;
 use JSON::PP;
@@ -42,28 +44,14 @@ sub deny {
 	exit 2;
 }
 
-sub resolve_dir {
-	my ($base, $dir) = @_;
-	return $dir if $dir =~ m{^/};
-	return ($ENV{HOME} // '') . substr($dir, 1) if $dir =~ m{^~(?:/|$)};
-	return "$base/$dir";
-}
-
 # The directory a bare `git push` runs in: the session cwd from the hook
 # input (the terminal tab's own cwd when it names one), moved by any
 # `cd <dir>` segment that precedes the push.
 my $cwd = $input->{cwd} // $ENV{PWD} // '.';
-$cwd = resolve_dir($cwd, $input->{tool_input}{cwd}) if defined $input->{tool_input}{cwd};
+$cwd = HookLib::resolve($input->{tool_input}{cwd}, $cwd) if defined $input->{tool_input}{cwd};
 
-# The first write to a guarded path; asked about once every segment passed.
+# The first change to a guarded path; asked about once every segment passed.
 my $ask;
-
-# The branch a push with no refspec (or `HEAD` / `@`) sends. Empty when it
-# cannot be resolved (detached HEAD, no repo, git missing).
-sub current_branch {
-	my ($dir, @git_opts) = @_;
-	return HookLib::git_line('-C', $dir, @git_opts, 'symbolic-ref', '--short', '-q', 'HEAD');
-}
 
 # The body of the `$(…)` or backtick substitution that opens at $i, and the
 # index of its closing character.
@@ -94,9 +82,8 @@ sub extract_substitution {
 # bodies are commands of their own.
 sub split_commands {
 	my ($s) = @_;
-	my (@out, $quote);
-	my $cur = '';
-	$quote = '';
+	my @out;
+	my ($cur, $quote) = ('', '');
 	for (my $i = 0; $i < length $s; $i++) {
 		my $c    = substr($s, $i, 1);
 		my $next = substr($s, $i + 1, 1);
@@ -126,7 +113,8 @@ sub split_commands {
 
 # Drop heredoc bodies (file content, not commands). Only when the terminator
 # is actually found: an unterminated or quoted `<<` must not swallow the
-# commands that follow it. `<<-` allows a tab-indented terminator.
+# commands that follow it. `<<-` allows a tab-indented terminator. A heredoc
+# fed to a shell is denied later, as a shell reading stdin.
 sub drop_heredoc_bodies {
 	my ($text) = @_;
 	my @lines = split /\n/, $text;
@@ -149,9 +137,11 @@ my $git_opts = qr/(?:-C \S+|-c \S+|--git-dir=\S+|--work-tree=\S+|--no-pager|--pa
 my $npm_opts = qr/(?:--prefix[= ]\S+|-C \S+|-w \S+|--workspace[= ]\S+|--filter[= ]\S+|--cwd[= ]\S+|-s|--silent)\s+/;
 
 # What runs another command in front of it: env assignments, shell keywords
-# and grouping, `timeout`/`nice`, and the package runners.
-my $wrapper = qr/(?:[A-Za-z_][A-Za-z0-9_]*=\S*|env|command|builtin|sudo|exec|time|nohup|!|\{|\}|then|do|else|elif|if|while|until|nice(?: -n ?-?\d+| -\d+)?|timeout(?: -[sk] \S+| --?[a-z-]+(?:=\S+)?)* \d+(?:\.\d+)?[smhd]?|npx|pnpx|bunx|bun x|npm exec|pnpm (?:dlx|exec)|yarn (?:dlx|exec)|-y|--yes|--no-install|--|-p \S+|--package[= ]\S+)/;
+# and grouping, `env`/`sudo`/`exec` and their options, `timeout`/`nice`, and
+# the package runners.
+my $wrapper = qr/(?:[A-Za-z_][A-Za-z0-9_]*=\S*|env(?: -[i0]| -u \S+| --[a-z-]+(?:=\S+)?)*|command(?: -p)?|builtin|sudo(?: -[ug] \S+| -[A-Za-z]+)*|exec(?: -a \S+| -[cl])*|time(?: -p)?|nohup|!|\{|\}|then|do|else|elif|if|while|until|nice(?: -n ?-?\d+| -\d+)?|timeout(?: -[sk] \S+| --?[a-z-]+(?:=\S+)?)* \d+(?:\.\d+)?[smhd]?|npx|pnpx|bunx|bun x|npm (?:exec|x)|pnpm (?:dlx|exec)|yarn (?:dlx|exec)|-y|--yes|--no-install|--|-p \S+|--package[= ]\S+)/;
 my $xargs   = qr/xargs(?: -[IdEnLPs] ?\S+| -\S+)*/;
+my $shell   = qr/(?:sh|bash|zsh|dash|ksh|fish)/;
 
 # Strip wrappers and env assignments, then basename the executable, so
 # `npx -y firebase-tools@13 deploy`, `FOO=1 firebase deploy`,
@@ -173,28 +163,66 @@ sub unwrap {
 	return ($seg, $via_xargs);
 }
 
-# Paths a command writes to: redirections, `tee`, in-place `sed`/`perl`,
-# and the destination of `cp`/`mv`/`install`/`rsync`.
-sub write_targets {
+# The command a segment runs as text: `sh -c "…"`, `bash <<< "…"`,
+# `eval "…"`, and the `-c` / `--call` of `npx` and `npm exec`. undef when
+# there is none.
+sub inner_command {
 	my ($seg) = @_;
-	my @targets = $seg =~ /(?:^|[^<>&\d])\d*&?>>?\s*([^\s&>|][^\s>|]*)/g;
-	my ($cmd, @args) = split / /, $seg;
-	my @positional = grep { !/^-/ } @args;
-	push @targets, @positional if $cmd eq 'tee';
-	push @targets, @positional if $cmd =~ /^(?:sed|perl)$/ && grep { /^-\w*i|^--in-place/ } @args;
-	push @targets, $positional[-1] if $cmd =~ /^(?:cp|mv|install|rsync)$/ && @positional;
-	return @targets;
+	return undef
+		unless $seg =~ /^$shell(?: -\S+)* -\S*c (.+)$/
+		|| $seg =~ /^$shell\b[^<]*<<< ?(.+)$/
+		|| $seg =~ /^eval (.+)$/
+		|| $seg =~ /^(?:-c|--call)[ =](.+)$/;
+	my $inner = $1;
+	$inner =~ s/^(["'])(.*)\1$/$2/s;
+	return $inner;
 }
 
-sub check_writes {
+# The segment as written, with `<` and `>` inside quotes blanked and the
+# quotes dropped: a commit message that mentions `-> firebase.json` is no
+# redirection, while `> "firebase.json"` still is.
+sub write_view {
+	my ($seg) = @_;
+	$seg =~ s/("[^"]*"|'[^']*')/$1 =~ tr{<>}{  }r/ge;
+	$seg =~ s/["']//g;
+	return $seg;
+}
+
+# The paths a command changes, each [path, 'write' | 'remove']: redirections,
+# `tee`, in-place `sed`/`perl`, `truncate`, the destination of `cp`/`mv`/
+# `install`/`rsync`/`ln`; and what `rm`, `chmod`, `chown`, an `mv` source
+# and `git rm`/`mv`/`checkout`/`restore` remove or replace.
+sub change_targets {
+	my ($seg) = @_;
+	my @writes = $seg =~ /(?:^|[^<>&\d])\d*&?>>?\s*([^\s&>|][^\s>|]*)/g;
+	my @removes;
+	my ($cmd, @args) = split / /, $seg;
+	my @positional = grep { !/^-/ } @args;
+	$cmd //= '';
+	if ($cmd eq 'git') {
+		my $sub = shift(@positional) // '';
+		push @removes, @positional if $sub =~ /^(?:rm|mv|checkout|restore)$/;
+	} elsif ($cmd =~ /^(?:tee|truncate)$/ || ($cmd =~ /^(?:sed|perl)$/ && grep { /^-\w*i|^--in-place/ } @args)) {
+		push @writes, @positional;
+	} elsif ($cmd =~ /^(?:cp|mv|install|rsync|ln)$/ && @positional) {
+		push @writes, pop @positional;
+		push @removes, @positional if $cmd eq 'mv';
+	} elsif ($cmd =~ /^(?:rm|unlink|chmod|chown)$/) {
+		push @removes, @positional;
+	}
+	return ((map { [$_, 'write'] } @writes), (map { [$_, 'remove'] } @removes));
+}
+
+sub check_changes {
 	my ($seg) = @_;
 	return if defined $ask;
-	for my $target (write_targets($seg)) {
-		my $rel = HookLib::repo_relative($target, $cwd, $ENV{CLAUDE_PROJECT_DIR});
+	for my $target (change_targets($seg)) {
+		my ($path, $kind) = @$target;
+		my $rel = HookLib::repo_relative($path, $cwd, $ENV{CLAUDE_PROJECT_DIR});
 		next if $rel eq '';
 		my ($decision, $reason) = HookLib::classify($rel);
-		next if $decision eq '';
-		$ask = "This command writes to $rel. $reason";
+		next if $decision eq '' || ($kind eq 'remove' && $decision ne 'ask');
+		$ask = "This command changes $rel. $reason";
 		return;
 	}
 }
@@ -211,24 +239,26 @@ sub check_git_push {
 		push @positional, $arg;
 	}
 	deny('git push --all or --mirror, which pushes main too') if $flag{'--all'} || $flag{'--mirror'};
-	deny('pushing tags') if $flag{'--tags'};
+	deny('pushing tags') if $flag{'--tags'} || $flag{'--follow-tags'};
 
 	shift @positional; # the remote
-	# Any refspec landing on main or a year branch: `main`, `HEAD:main`,
-	# `x:refs/heads/2026`, `refs/heads/main`, `+2026`, `:2026`.
+	# Any refspec landing on main, a year branch or a tag: `main`,
+	# `HEAD:main`, `x:refs/heads/2026`, `refs/heads/main`, `+2026`, `:2026`,
+	# `HEAD:refs/tags/v2.0.0`, `v1.2.3`.
 	for my $ref (@positional) {
 		deny('git push with a wildcard refspec') if $ref =~ /\*/;
 		my $dst = (split /:/, $ref, -1)[-1];
 		$dst =~ s/^\+//;
 		$dst =~ s{^refs/heads/}{};
 		deny("git push to $dst") if $dst =~ /^(?:main|20\d\d)$/;
+		deny("git push of the tag $dst") if $dst =~ m{^refs/tags/} || $dst =~ /^v?\d+(?:\.\d+)+/;
 	}
 
 	# No refspec, or `HEAD` / `@` (optionally forced), pushes the current
 	# branch. Deny it when that branch is main, a year branch, or cannot be
-	# resolved.
+	# resolved (detached HEAD, no repo, git missing).
 	return if @positional && !grep { /^\+?(?:HEAD|@)$/ } @positional;
-	my $branch = current_branch($git_dir, @git_loc);
+	my $branch = HookLib::git_line('-C', $git_dir, @git_loc, 'symbolic-ref', '--short', '-q', 'HEAD');
 	deny("git push of the current branch, $branch") if $branch =~ /^(?:main|20\d\d)$/;
 	deny('git push of the current branch, which could not be resolved') if $branch eq '';
 }
@@ -246,6 +276,7 @@ sub check_gh {
 	my ($seg) = @_;
 	(my $gh = $seg) =~ s/ (?:-R|--repo)(?:=| )\S+//g;
 	deny('gh pr merge')                  if $gh =~ /^gh pr merge\b/;
+	deny('gh release create')            if $gh =~ /^gh release create\b/;
 	deny('workflow dispatch')            if $gh =~ /^gh workflow run\b/;
 	deny('workflow rerun')               if $gh =~ /^gh run rerun\b/;
 	deny('gh alias, which can hide a merge') if $gh =~ /^gh alias (?:set|import)\b/;
@@ -258,9 +289,25 @@ sub check_gh {
 
 # The firebase CLI allowlist (ADR 0017): local emulators, read-only lists,
 # account and project selection, help, and preview channels. Everything else
-# reaches the project shared with the mobile app.
-my $firebase_valued = qr/^(?:--project|-P|--config|-c|--token|--account|--only|--expires|--site)$/;
+# reaches the project shared with the mobile app. Global options take a
+# value before the verb; the channel and emulator options after it.
+my $firebase_global = qr/^(?:--project|-P|--config|-c|--token|--account)$/;
+my $firebase_verb_valued = qr/^(?:--only|--expires|--site|--import|--export-on-exit)$/;
 
+# The positional arguments after a firebase verb, valued options skipped.
+sub firebase_positional {
+	my (@args) = @_;
+	my @positional;
+	while (@args) {
+		my $arg = shift @args;
+		if ($arg =~ $firebase_global || $arg =~ $firebase_verb_valued) { shift @args; next }
+		push @positional, $arg unless $arg =~ /^-/;
+	}
+	return @positional;
+}
+
+# Denies what the allowlist leaves out. Returns the script of
+# `emulators:exec`, which runs it and so is scanned like `sh -c`.
 sub check_firebase {
 	my ($seg) = @_;
 	my @args = split / /, $seg;
@@ -268,19 +315,14 @@ sub check_firebase {
 	while (@args && $args[0] =~ /^-/) {
 		my $opt = shift @args;
 		return if $opt =~ /^(?:--version|-V|--help|-h)$/;
-		shift @args if $opt =~ $firebase_valued;
+		shift @args if $opt =~ $firebase_global;
 	}
 	my $verb = shift @args // '';
+	return join ' ', firebase_positional(@args) if $verb eq 'emulators:exec';
 	return if $verb =~ /^(?:|help|login(?::\S+)?|logout|use|emulators:\S+|\S+:list)$/;
 	if ($verb eq 'hosting:channel:deploy') {
-		my @positional;
-		while (@args) {
-			my $arg = shift @args;
-			if ($arg =~ $firebase_valued) { shift @args; next }
-			push @positional, $arg unless $arg =~ /^-/;
-		}
-		my $channel = $positional[0] // '';
-		return if $channel ne '' && $channel ne 'live';
+		my ($channel) = firebase_positional(@args);
+		return if defined $channel && $channel ne 'live';
 		deny('firebase hosting:channel:deploy to live or without a channel');
 	}
 	deny("firebase $verb (allowed: emulators, *:list, login, logout, use, help, hosting:channel:deploy to a preview channel)");
@@ -292,31 +334,28 @@ while (@segments) {
 	my $seg = shift @segments;
 	$seg =~ s/\s+/ /g;
 	$seg =~ s/^ | $//g;
-	my $via_xargs;
+	my ($via_xargs, $quoted_xargs, $inner);
 	($seg, $via_xargs) = unwrap($seg);
-	next if $seg eq '';
+	if (defined($inner = inner_command($seg))) { unshift @segments, split_commands($inner); next }
 
-	# Unwrap `sh -c "…"`, `bash <<< "…"` and `eval "…"`, and scan the inner command.
-	if ($seg =~ /^(?:sh|bash|zsh|dash|ksh|fish)(?: -\S+)* -\S*c (.+)$/ || $seg =~ /^(?:sh|bash|zsh|dash|ksh|fish)\b[^<]*<<< ?(.+)$/ || $seg =~ /^eval (.+)$/) {
-		my $inner = $1;
-		$inner =~ s/^(["'])(.*)\1$/$2/s;
-		unshift @segments, split_commands($inner);
-		next;
-	}
-	deny('a shell reading commands from stdin, which hides what runs') if $seg =~ /^(?:sh|bash|zsh|dash|ksh|fish)(?: -[A-Za-z]+)*$/;
+	check_changes(write_view($seg));
 
-	# Drop quotes: `git push origin "main"` is `git push origin main`.
+	# Drop quotes, `git push origin "main"` is `git push origin main`, and
+	# unwrap again for a quoted command word such as `"npx" firebase deploy`.
 	$seg =~ s/["']//g;
-
-	check_writes($seg);
+	($seg, $quoted_xargs) = unwrap($seg);
+	$via_xargs ||= $quoted_xargs;
+	if (defined($inner = inner_command($seg))) { unshift @segments, split_commands($inner); next }
 
 	# Drop redirections: `git push origin main>/dev/null` is `git push origin main`.
 	$seg =~ s/ ?\d*&?>>? ?(?:&\d+|[^ &>|]+)//g;
 	$seg =~ s/ ?\d*<{1,3} ?[^ <]+//g;
+	next if $seg eq '';
+	deny('a shell reading commands from stdin or a heredoc, which hides what runs') if $seg =~ /^$shell(?: -[A-Za-z]+)*$/;
 
 	# `cd <dir>` moves where a later bare `git push` resolves its branch.
 	if ($seg =~ /^cd(?: (\S+))?$/) {
-		$cwd = resolve_dir($cwd, $1 // ($ENV{HOME} // '/'));
+		$cwd = HookLib::resolve($1 // ($ENV{HOME} // '/'), $cwd);
 		next;
 	}
 
@@ -326,7 +365,7 @@ while (@segments) {
 	if ($seg =~ /^git ((?:$git_opts)+)/) {
 		my $prefix = $1;
 		while ($prefix =~ /(-C (\S+)|--git-dir=\S+|--work-tree=\S+)/g) {
-			if (defined $2) { $git_dir = resolve_dir($git_dir, $2) } else { push @git_loc, $1 }
+			if (defined $2) { $git_dir = HookLib::resolve($2, $git_dir) } else { push @git_loc, $1 }
 		}
 	}
 	$seg =~ s/^git $git_opts+/git /;
@@ -335,7 +374,7 @@ while (@segments) {
 	check_git_push($seg, $git_dir, @git_loc) if $seg =~ /^git push\b/;
 	check_git_tag($seg)                      if $seg =~ /^git tag\b/;
 	check_gh($seg)                           if $seg =~ /^gh\b/;
-	check_firebase($seg)                     if $seg =~ /^firebase\b/;
+	unshift @segments, map { split_commands($_) } check_firebase($seg) if $seg =~ /^firebase\b/;
 	deny('deploy via package script') if $seg =~ /^(?:npm|pnpm|yarn|bun) (?:run |run-script )?deploy\b/;
 }
 

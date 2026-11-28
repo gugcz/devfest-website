@@ -26,19 +26,28 @@ Remote Config writes. Plan:
 - The Firebase CLI runs on an allowlist in `.claude/hooks/block-deploy.sh`:
   `emulators:*`, any `*:list`, `login`, `logout`, `use`, `help`,
   `--version`, and `hosting:channel:deploy` to a channel other than `live`.
-  Every other verb is denied, behind any wrapper (`npx`, `npm exec`,
-  `pnpm dlx`, `yarn dlx`, `bun x`, a pinned `firebase-tools@<version>`).
-- The hook reads the whole command line: quotes, `$(…)`, backticks,
-  subshells, shell keywords, `timeout`, `nice`, `xargs` and here-strings.
-  It runs for Bash and for the terminal panel tool.
+  Every other verb is denied, behind the runners agents use (`npx`,
+  `npm exec`, `npm x`, `pnpm dlx`, `yarn dlx`, `bun x`, a pinned
+  `firebase-tools@<version>`). `emulators:exec` runs a script, so the hook
+  scans that script too.
+- The hook reads quotes, `$(…)`, backticks, subshells, shell keywords,
+  `env`, `timeout`, `nice`, `xargs`, here-strings and `-c` bodies; it denies
+  a shell that reads commands from stdin or a heredoc. It runs for Bash and
+  for the terminal panel tool. Tags and releases are denied with merges.
+- `onFailure: "block"` on the hook: a hook that cannot start or crashes
+  blocks the command instead of letting it through.
 - `.claude/settings.json` denies the MCP tools that deploy, write to the
   shared project, send messages to app users, or merge a PR, by tool-name
   glob, so any server name matches. Read tools stay available.
 - Bypass permissions mode is off for the repo.
-- Writes to the hooks and the shared permissions ask first, in an Edit and
-  in a Bash command.
-- `npm run test:claude` (`scripts/claude-setup.test.mjs`) holds the cases
-  and runs in `verify` and the required CI job.
+- Changes to the hooks, the shared permissions and the shared Firebase
+  files ask first: an Edit, a Bash write, and a Bash `rm`, `chmod`, `mv` or
+  `git rm`. Build output and lockfiles are denied to an Edit but only asked
+  about for a Bash write, and a Bash removal of them passes, since builds,
+  installs and cleanups write them.
+- `npm run test:claude` (`scripts/claude-setup.test.mjs`) holds every case
+  the hook must deny, ask about and allow, and runs in `verify` and the
+  required CI job.
 
 ## Consequences
 
@@ -51,5 +60,8 @@ Remote Config writes. Plan:
   a deny rule names it.
 - Editing a hook or `settings.json` prompts, including for agents doing
   the edit on purpose.
-- The hooks stay a belt: a command built at run time from variables still
-  gets past them. The ruleset stays the boundary for `main`.
+- A broken hook blocks every Bash command until it is fixed, from the
+  maintainer's own shell.
+- The hooks stay a belt: a command built at run time from variables, or a
+  spelling the test file does not list, still gets past them. The ruleset
+  stays the boundary for `main`.

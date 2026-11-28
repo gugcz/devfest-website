@@ -34,11 +34,12 @@ Enforced by a PreToolUse hook on Bash and the terminal panel
 (`.claude/hooks/block-deploy.sh`) and by `permissions.deny` for MCP tools
 ([ADR 0017](docs/adr/0017-agent-guardrails-cover-the-firebase-cli-and-mcp.md)):
 pushes to `main` or a year branch (also `--all`, `--mirror`, and a bare
-`git push` while on one or when the branch cannot be resolved), PR merges
-and auto-merge, release tags, workflow dispatch and reruns, `deploy` scripts,
-and every Firebase CLI verb outside an allowlist (emulators, `*:list`, login,
-`use`, preview channels) are denied before they run, however the command is
-wrapped. The hook is a belt against accidents; the boundary is the GitHub
+`git push` while on one or when the branch cannot be resolved), tags and
+releases, PR merges and auto-merge, workflow dispatch and reruns, `deploy`
+scripts, and every Firebase CLI verb outside an allowlist (emulators,
+`*:list`, login, `use`, preview channels) are denied before they run, in
+every wrapper spelling `npm run test:claude` lists; a hook that cannot run
+blocks the command. The hook is a belt against accidents; the boundary is the GitHub
 ruleset on `main` and the year branches (pull request required) and the
 `production` environment, which deploys only from `main`. Nothing but the
 hook and the deny rules guards the Firebase CLI and MCP tools.
@@ -173,7 +174,7 @@ port; outputs and caches stay inside the worktree.
     and asks before editing what reaches the shared project (`firebase.json`,
     `.firebaserc`, the deploy workflows, the iOS app-links file) and the
     guardrails (`.claude/hooks/`, `.claude/settings.json`). The paths live
-    in `HookLib.pm`; `block-deploy.sh` asks before a Bash write to them.
+    in `HookLib.pm`; `block-deploy.sh` asks before a Bash change to them.
   - `session-start.sh` runs `npm ci` in a fresh checkout and retries a
     failed one.
   - `permissions.deny` keeps `.env` files from Claude and removes the MCP

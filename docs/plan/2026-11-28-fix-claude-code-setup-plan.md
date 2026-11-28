@@ -48,8 +48,6 @@ The maintainer made these on 2026-11-28:
   and 2027 has no date or venue yet.
 - `settings.json` disables bypass permissions mode. Marketplaces stay unpinned.
 - The `ship` skill becomes `finish-pr`.
-- The maintainer's personal `~/.claude/CLAUDE.md` gains an exception line for
-  this repo. It lives outside the repo and outside these PRs.
 
 ## Non-goals
 
