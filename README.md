@@ -49,7 +49,8 @@ npm run preview
 # Accessibility audit (mock-data build + axe)
 npm run a11y
 
-# Everything CI checks: astro check, cognitive complexity, site and function tests, axe
+# Everything CI checks: astro check, cognitive complexity, the literal guard,
+# site, Claude setup and function tests, axe
 npm run verify
 
 # Freeze the edition src/site.config.ts describes into archive/<year>/ (once a year,

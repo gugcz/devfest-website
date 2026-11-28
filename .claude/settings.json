@@ -1,9 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(npm run verify)",
       "Bash(npm run check)",
       "Bash(npm run complexity)",
+      "Bash(npm run literals)",
+      "Bash(npm run test:site)",
+      "Bash(npm run test:claude)",
       "Bash(npm run a11y)",
       "Bash(npm --prefix functions test)",
       "Bash(npm ci)",
@@ -16,13 +20,26 @@
       "Bash(git branch --show-current)"
     ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.local)",
-      "Read(./.env.production)",
-      "Read(./functions/.env)",
-      "Read(./functions/.env.local)",
-      "Read(./functions/.env.*.local)"
-    ]
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.production)",
+      "mcp__*__firebase_deploy",
+      "mcp__*__firebase_create_*",
+      "mcp__*__firestore_add_*",
+      "mcp__*__firestore_update_*",
+      "mcp__*__firestore_delete_*",
+      "mcp__*__firestore_create_*",
+      "mcp__*__realtimedatabase_set_*",
+      "mcp__*__remoteconfig_update_*",
+      "mcp__*__auth_update_*",
+      "mcp__*__auth_set_*",
+      "mcp__*__messaging_send_*",
+      "mcp__*__dataconnect_execute_graphql",
+      "mcp__*__merge_pull_request",
+      "mcp__ccd_pr__set_auto_merge"
+    ],
+    "disableBypassPermissionsMode": "disable"
   },
   "hooks": {
     "PreToolUse": [
@@ -31,16 +48,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-edits.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-edits.sh",
+            "args": []
           }
         ]
       },
       {
-        "matcher": "Bash",
+        "matcher": "Bash|mcp__terminal__run_in_terminal",
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-deploy.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-deploy.sh",
+            "args": []
           }
         ]
       }
@@ -50,7 +69,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh",
+            "args": []
           }
         ]
       }

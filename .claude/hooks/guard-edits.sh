@@ -3,14 +3,23 @@
 #
 # - Build output and lockfiles are denied: change the source or the manifest
 #   and rebuild or reinstall instead.
-# - Files that reach the Firebase project shared with the mobile app, or the
-#   production deploy, ask first (CLAUDE.md > Firebase shared project).
+# - Files that reach the Firebase project shared with the mobile app or the
+#   production deploy, and the hooks and shared permissions themselves, ask
+#   first (CLAUDE.md > Firebase shared project).
 #
-# Perl + core JSON::PP only, like block-deploy.sh. An unreadable input is let
+# The guarded paths live in HookLib.pm, shared with block-deploy.sh, which
+# asks before a Bash command writes to one. Each path is resolved against
+# its own worktree, so `./dist/x`, `src/../dist/x`, `DIST/x` and a file in
+# another worktree all count.
+#
+# Perl core modules only, like block-deploy.sh. An unreadable input is let
 # through: this guard is a convenience, the deploy guard is the hard one.
 use strict;
 use warnings;
 use JSON::PP;
+use FindBin;
+use lib $FindBin::RealBin;
+use HookLib;
 
 local $/;
 my $raw = <STDIN>;
@@ -19,28 +28,18 @@ my $file = $input->{tool_input}{file_path} // $input->{tool_input}{notebook_path
 exit 0 if $file eq '';
 
 my $root = $ENV{CLAUDE_PROJECT_DIR} // '';
-my $rel = $file;
-$rel =~ s{^\Q$root\E/}{} if $root ne '';
+my $base = $input->{cwd} // ($root ne '' ? $root : '.');
+my $rel = HookLib::repo_relative($file, $base, $root);
+exit 0 if $rel eq '';
 
-sub decide {
-	my ($decision, $reason) = @_;
-	print JSON::PP->new->canonical->encode({
-		hookSpecificOutput => {
-			hookEventName            => 'PreToolUse',
-			permissionDecision       => $decision,
-			permissionDecisionReason => $reason,
-		},
-	});
-	exit 0;
-}
+my ($decision, $reason) = HookLib::classify($rel);
+exit 0 if $decision eq '';
 
-if ($rel =~ m{^(dist|functions/lib|functions/lib-test)/}) {
-	decide('deny', "$rel is build output. Edit the source and rebuild.");
-}
-if ($rel =~ m{^(functions/)?package-lock\.json$}) {
-	decide('deny', "$rel is a lockfile. Change package.json and run npm install in that directory.");
-}
-if ($rel =~ m{^(firebase\.json|public/\.well-known/apple-app-site-association|\.github/workflows/firebase-[\w-]+\.yml)$}) {
-	decide('ask', "$rel reaches the Firebase project shared with the mobile app or the production deploy. Read CLAUDE.md > Firebase shared project before changing it.");
-}
-exit 0
+print JSON::PP->new->canonical->encode({
+	hookSpecificOutput => {
+		hookEventName            => 'PreToolUse',
+		permissionDecision       => $decision,
+		permissionDecisionReason => $reason,
+	},
+});
+exit 0;
