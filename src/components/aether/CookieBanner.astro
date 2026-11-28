@@ -15,9 +15,9 @@
 		Details in our <a href="/privacy-policy">Privacy Policy</a>.
 	</p>
 	<div class="cookie-actions">
-		<button id="cookie-accept-all" type="button" class="btn-framed cookie-btn">Allow all</button>
-		<button id="cookie-accept" type="button" class="btn-framed cookie-btn">Analytics only</button>
-		<button id="cookie-decline" type="button" class="btn-framed cookie-btn">Decline</button>
+		<button id="cookie-accept-all" type="button" class="btn-framed cookie-btn"><span class="cookie-btn-label">Allow all</span></button>
+		<button id="cookie-accept" type="button" class="btn-framed cookie-btn"><span class="cookie-btn-label">Analytics only</span></button>
+		<button id="cookie-decline" type="button" class="btn-framed cookie-btn"><span class="cookie-btn-label">Decline</span></button>
 	</div>
 </div>
 
@@ -87,11 +87,18 @@
 	// The portal's 280px minimum is released, but only down to the longest
 	// word: `break-word` keeps a word whole in the min-content width, so
 	// "Analytics only" wraps between its words (or the choice takes its own
-	// row) instead of mid-word. `max-width: 100%` still caps it on a phone.
+	// row) instead of mid-word.
 	.cookie-btn {
 		flex: 1 1 9rem;
 		min-width: auto;
 		overflow-wrap: break-word;
+	}
+
+	// When even one word is wider than the slip (a very narrow phone, text
+	// zoomed to 200%), `max-width: 100%` caps the button; the label may then
+	// shrink below that word and break it, inside the frame, never past it.
+	.cookie-btn-label {
+		min-width: 0;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
