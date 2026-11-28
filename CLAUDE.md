@@ -30,15 +30,19 @@ frozen; it never deploys, and its one later commit is its frozen build
 - Hand back the **PR preview URL** (`devfest-public--pr-<n>-*.web.app`), never
   a production URL.
 
-Enforced by a PreToolUse hook (`.claude/hooks/block-deploy.sh`, wired in
-`.claude/settings.json`): pushes to `main` or a year branch (also a bare
-`git push` or `git push origin HEAD` while on one, or when the branch cannot
-be resolved), PR merges, `firebase deploy`, `npm run deploy`-style scripts,
-workflow dispatch and release tags are denied before they run — including
-through `sh -c`, `eval`, `git -C`, `npx -p` and flag-before-verb spellings.
-The hook is a belt against accidents; the boundary is the GitHub ruleset on
-`main` and the year branches (pull request required) and the `production`
-environment, which deploys only from `main`.
+Enforced by a PreToolUse hook on Bash and the terminal panel
+(`.claude/hooks/block-deploy.sh`) and by `permissions.deny` for MCP tools
+([ADR 0017](docs/adr/0017-agent-guardrails-cover-the-firebase-cli-and-mcp.md)):
+pushes to `main` or a year branch (also `--all`, `--mirror`, and a bare
+`git push` while on one or when the branch cannot be resolved), tags and
+releases, PR merges and auto-merge, workflow dispatch and reruns, `deploy`
+scripts, and every Firebase CLI verb outside an allowlist (emulators,
+`*:list`, login, `use`, preview channels) are denied before they run, in
+every wrapper spelling `npm run test:claude` lists; a hook that cannot run
+blocks the command. The hook is a belt against accidents; the boundary is the GitHub
+ruleset on `main` and the year branches (pull request required) and the
+`production` environment, which deploys only from `main`. Nothing but the
+hook and the deny rules guards the Firebase CLI and MCP tools.
 
 ## Real customer data never enters this repository
 
@@ -120,11 +124,12 @@ edited PR body keeps its old text in the public edit history.
 
 | Task | Command |
 | --- | --- |
-| Install | `npm ci && npm --prefix functions ci` (the SessionStart hook does this when `node_modules` is missing) |
+| Install | `npm ci && npm --prefix functions ci` (the SessionStart hook does this when an install is missing or failed) |
 | Dev server | `npm run dev` (`/api/*` from mocks; `DEVFEST_LIVE_API=1` for deployed functions) |
 | Full gate (= the CI checks) | `npm run verify` |
 | Types | `npm run check` (`astro check`) |
 | Site tests | `npm run test:site` (`node --test` on `src/**/*.test.ts`, types stripped by Node) |
+| Claude setup tests | `npm run test:claude` (`scripts/claude-setup.test.mjs`: the hooks, the MCP deny rules, dead rule globs) |
 | Flags off | `npm run flags-off` (two builds with feature flags off; fails on a route, sitemap entry or link left behind) |
 | Archive an edition | `npm run archive -- <year>` (once a year, while `config.event` is that edition; writes `archive/<year>/`, published on its year branch and pinned in `archive/sources.json`; `docs/adapting.md`) |
 | Cognitive complexity | `npm run complexity` (`sonarjs/cognitive-complexity`, max 15) |
@@ -132,7 +137,8 @@ edited PR body keeps its old text in the public edit history.
 | Accessibility | `npm run a11y` (axe on an `A11Y_MOCK=1` build, needs Playwright Chromium) |
 
 Only a green `npm run verify` counts as green: `astro check` alone misses
-complexity, the site and function tests and the axe sweep. A function over 15 is
+complexity, the literal guard, the site, Claude setup and function tests and
+the axe sweep. A function over 15 is
 refactored; never raise the threshold or add an ignore comment.
 
 Worktrees run in parallel on one machine: a script that starts a server
@@ -166,11 +172,16 @@ port; outputs and caches stay inside the worktree.
   - `guard-edits.sh` denies hand edits to build output and lockfiles
     (`dist/`, `functions/lib/`, `functions/lib-test/`, `package-lock.json`)
     and asks before editing what reaches the shared project (`firebase.json`,
-    the deploy workflows, the iOS app-links file).
-  - `session-start.sh` runs `npm ci` in a fresh checkout.
-  - `.env` files are denied to Claude in `permissions.deny`;
-    `permissions.allow` pre-approves only the `verify` gate and its parts,
-    `npm ci` and read-only git (never push, merge or deploy).
+    `.firebaserc`, the deploy workflows, the iOS app-links file) and the
+    guardrails (`.claude/hooks/`, `.claude/settings.json`). The paths live
+    in `HookLib.pm`; `block-deploy.sh` asks before a Bash change to them.
+  - `session-start.sh` runs `npm ci` in a fresh checkout and retries a
+    failed one.
+  - `permissions.deny` keeps `.env` files from Claude and removes the MCP
+    tools that deploy, write to the shared project or merge; bypass mode is
+    off. `permissions.allow` pre-approves only the `verify` gate and its
+    parts, `npm ci` and read-only git (never push, merge or deploy).
+  - `npm run test:claude` holds every case the hooks must deny or allow.
 - **Path-scoped rules** (`.claude/rules/`): [below](#path-scoped-rules).
 
 ## Path-scoped rules

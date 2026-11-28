@@ -26,3 +26,4 @@ their dates are the PRs' merge dates. When to write one: `.claude/rules/docs.md`
 | [0014](0014-app-check-only-where-a-callable-runs.md) | App Check starts only on a page with a callable form | accepted |
 | [0015](0015-crashlytics-behind-the-consent-gate.md) | Crashlytics reports browser errors only after consent | accepted |
 | [0016](0016-ad-tags-behind-a-marketing-consent.md) | Meta Pixel and LinkedIn Insight Tag run behind a marketing consent | accepted |
+| [0017](0017-agent-guardrails-cover-the-firebase-cli-and-mcp.md) | Agent guardrails cover the Firebase CLI and MCP tools, not only git | accepted |

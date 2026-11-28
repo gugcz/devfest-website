@@ -18,8 +18,8 @@ and console steps for the Cloud Functions: [README.md](README.md).
 ## Before you open a PR
 
 - `npm run verify` is green: `astro check`, cognitive complexity (max 15,
-  never raised, never ignored), the literal guard, the site and function
-  tests, the axe sweep.
+  never raised, never ignored), the literal guard, the site, Claude setup
+  and function tests, the axe sweep.
 - A change that adds, removes or renames a page, a function, a secret or a
   rule updates the docs in the same PR (`.claude/rules/docs.md` says which).
 - No real customer, partner or attendee data anywhere, not even masked

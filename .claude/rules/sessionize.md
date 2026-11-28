@@ -9,8 +9,8 @@ paths:
   - "src/lib/lineup-static.ts"
   - "src/lib/share.ts"
   - "src/layouts/Share.astro"
-  - "src/pages/speakers/**"
-  - "src/pages/talks/**"
+  - "src/routes/speakers/**"
+  - "src/routes/talks/**"
 ---
 
 # Sessionize lineup

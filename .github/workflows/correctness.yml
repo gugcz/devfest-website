@@ -48,6 +48,10 @@ jobs:
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run test:site
 
+      - name: Claude Code setup tests (hooks, permissions, rule globs)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run test:claude
+
   functions-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
