@@ -9,6 +9,10 @@ import featureRoutes from './src/integrations/feature-routes';
 import archives, { archivedPages } from './src/integrations/archives';
 import redirectGuard from './src/integrations/redirect-guard';
 import { ensureArchives } from './src/lib/archive-sources';
+// Static on purpose: Astro loads this file through a Vite module runner and
+// closes it before `configureServer` runs, so an `await import()` there
+// fails with "Vite module runner has been closed".
+import { apiFixtureMiddleware } from './scripts/a11y-mocks/api.mjs';
 
 const BUILD_DATE = new Date().toISOString();
 
@@ -85,9 +89,8 @@ const legacyBrowserTarget = (): Plugin => ({
 const devApiMocks = (): Plugin => ({
     name: 'devfest:dev-api-fixtures',
     apply: 'serve',
-    async configureServer(server) {
+    configureServer(server) {
         if (process.env.DEVFEST_LIVE_API === '1') return;
-        const { apiFixtureMiddleware } = await import('./scripts/a11y-mocks/api.mjs');
         // Ahead of Astro's own middleware, which would answer /api/* with a 404
         // page before we ever see the request.
         server.middlewares.use(apiFixtureMiddleware);
